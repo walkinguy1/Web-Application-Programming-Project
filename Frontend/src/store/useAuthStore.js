@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { create } from 'zustand';
 import axios from 'axios';
 
@@ -18,7 +19,7 @@ export const useAuthStore = create((set, get) => ({
       });
       
       const { access } = res.data;
-      const userData = { username };
+      const userData = { username, is_staff: res.data.is_staff || false };
 
       // Persist to local storage
       localStorage.setItem('token', access);

@@ -1,8 +1,9 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
 
 class RegisterSerializer(serializers.ModelSerializer):
-    # Password is write-only so it's never returned in an API response
     password = serializers.CharField(write_only=True)
 
     class Meta:
@@ -15,10 +16,18 @@ class RegisterSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
-        # create_user handles password hashing and saving to DB
         user = User.objects.create_user(
             username=validated_data['username'],
             password=validated_data['password'],
             email=validated_data.get('email', '')
         )
-        return user 
+        return user
+
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        # Attach extra user info to the login response
+        data['is_staff'] = self.user.is_staff
+        data['username'] = self.user.username
+        return data

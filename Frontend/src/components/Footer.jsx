@@ -47,8 +47,8 @@ export default function Footer() {
         <div>
           <h4 className="text-lg font-bold mb-6">Support</h4>
           <ul className="space-y-4 text-slate-400 text-sm">
-            <li className="flex items-center gap-3">📍 123 Tech Avenue, NY</li>
-            <li className="flex items-center gap-3">📞 +1 (555) 000-ZAPP</li>
+            <li className="flex items-center gap-3">📍 Nepal ma ho ni</li>
+            <li className="flex items-center gap-3">📞 9841-ZAPP</li>
             <li className="flex items-center gap-3">✉️ support@zappstore.com</li>
           </ul>
         </div>

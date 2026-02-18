@@ -1,9 +1,13 @@
 from django.urls import path
 from .views import RegisterView
+from .serializers import CustomTokenObtainPairSerializer
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
 
 urlpatterns = [
     # Register: /api/auth/register/

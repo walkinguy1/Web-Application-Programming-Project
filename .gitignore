@@ -1,12 +1,13 @@
-env/
+venv/
 
 .vscode
 node_modules
 dist
 
+Frontend/node_modules
 # Virtual Environment
-env/
-Backend/env/
+venv/
+Backend/venv/
 
 # Python cache
 __pycache__/

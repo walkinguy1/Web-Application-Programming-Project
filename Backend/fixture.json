@@ -1,0 +1,936 @@
+[
+{
+  "model": "cart.cartitem",
+  "pk": 27,
+  "fields": {
+    "cart": 1,
+    "product": 2,
+    "quantity": 2
+  }
+},
+{
+  "model": "cart.cartitem",
+  "pk": 28,
+  "fields": {
+    "cart": 1,
+    "product": 7,
+    "quantity": 1
+  }
+},
+{
+  "model": "cart.cartitem",
+  "pk": 29,
+  "fields": {
+    "cart": 1,
+    "product": 13,
+    "quantity": 1
+  }
+},
+{
+  "model": "products.product",
+  "pk": 2,
+  "fields": {
+    "title": "iPhone 17 Pro Max",
+    "description": "The iPhone 17 Pro Max (released Sept 2025) is a flagship smartphone features a 6.9-inch ProMotion OLED display, the 3nm A19 Pro chip, and 12GB of RAM. It highlights a triple 48MP rear camera system, an 18MP front camera, and up to 39 hours of video playback. Key enhancements include a heat-forged aluminum unibody, Apple Intelligence capabilities, and superior battery performance.",
+    "price": "240000.00",
+    "category": "Electronics",
+    "image": "product_images/iPhone-17-Pro-Max-Cosmic-Orange.jpg",
+    "rating_rate": "5.0"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 3,
+  "fields": {
+    "title": "iphone 12",
+    "description": "acs hcadc",
+    "price": "23433.00",
+    "category": "Electronics",
+    "image": "product_images/Apple_iPhone_17_Pro_Max.jpg",
+    "rating_rate": "5.0"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 4,
+  "fields": {
+    "title": "71200 Samsung tv",
+    "description": "very nice hero tv",
+    "price": "5000.00",
+    "category": "Electronics",
+    "image": "product_images/29b25a5f38fe4026aeb2b143006ab81c.webp",
+    "rating_rate": "5.0"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 5,
+  "fields": {
+    "title": "Goat Meat",
+    "description": "this is meat of goat",
+    "price": "50000.00",
+    "category": "Masu",
+    "image": "product_images/product-jpeg-500x500.webp",
+    "rating_rate": "10.0"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 6,
+  "fields": {
+    "title": "masu",
+    "description": "masu masu",
+    "price": "20.00",
+    "category": "Masu",
+    "image": "product_images/Rich-Goat-Curry-Cut-Small-16-20-Pieces-pr_nbzk1sx8n3k-min-compressed-scaled.jpg",
+    "rating_rate": "0.0"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 7,
+  "fields": {
+    "title": "Nepal Jersy",
+    "description": "Nepal's national sports jerseys, primarily in cricket and football, feature the national colors of blue and red and often incorporate symbolic imagery of the Himalayas and the national emblem, the one-horned rhino",
+    "price": "100.00",
+    "category": "Men's Clothing",
+    "image": "product_images/images_5.jpg",
+    "rating_rate": "5.0"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 8,
+  "fields": {
+    "title": "mini dress",
+    "description": "For girls",
+    "price": "100.00",
+    "category": "Women's Clothing",
+    "image": "product_images/ce6a97c0-b383-40f6-935e-5499f42a9d56.jpg",
+    "rating_rate": "5.0"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 9,
+  "fields": {
+    "title": "halter dress",
+    "description": "special item",
+    "price": "100.00",
+    "category": "Women's Clothing",
+    "image": "product_images/bce34aa7-79a2-45b3-911e-b265f533e76b.jpg",
+    "rating_rate": "5.0"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 10,
+  "fields": {
+    "title": "Gucci 18k golden necklace",
+    "description": "Gucci's high-end gold necklaces are exclusively crafted from 18k gold (yellow, white, or rose), an alloy made with 75% pure gold mixed with other metals to provide the necessary strength, durability, and resilience for fine jewelry designs.",
+    "price": "3999.00",
+    "category": "Jewelry",
+    "image": "product_images/images_8.jpg",
+    "rating_rate": "5.0"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 11,
+  "fields": {
+    "title": "LV Neckwear",
+    "description": "These pieces are investment-grade items made from solid 18-karat gold (Yellow, White, or Rose) and often feature diamonds or precious gemstones.",
+    "price": "4999.00",
+    "category": "Jewelry",
+    "image": "product_images/louis-vuitton-lv-large-pendant-yellow-gold-and-diamonds--Q93848_PM2_Front_view.webp",
+    "rating_rate": "5.0"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 12,
+  "fields": {
+    "title": "Diamond Ring",
+    "description": "for someone special",
+    "price": "6999.00",
+    "category": "Jewelry",
+    "image": "product_images/images_7.jpg",
+    "rating_rate": "5.0"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 13,
+  "fields": {
+    "title": "Old monk",
+    "description": "Old Monk is an iconic vatted Indian dark rum first launched on December 19, 1954. Produced by Mohan Meakin at their distillery in Ghaziabad, Uttar Pradesh, it has achieved cult status in India and is one of the best-selling dark rums in the world.",
+    "price": "5000.00",
+    "category": "Liquor",
+    "image": "product_images/OLDMONK300.webp",
+    "rating_rate": "5.0"
+  }
+},
+{
+  "model": "products.productimage",
+  "pk": 1,
+  "fields": {
+    "product": 2,
+    "image": "product_images/gallery/iphone-17-pro-max-deep-bkue_1.png"
+  }
+},
+{
+  "model": "products.productimage",
+  "pk": 2,
+  "fields": {
+    "product": 2,
+    "image": "product_images/gallery/Apple_iPhone_17_Pro_Max.jpg"
+  }
+},
+{
+  "model": "products.productimage",
+  "pk": 3,
+  "fields": {
+    "product": 4,
+    "image": "product_images/gallery/images_2.jpg"
+  }
+},
+{
+  "model": "products.productimage",
+  "pk": 4,
+  "fields": {
+    "product": 4,
+    "image": "product_images/gallery/UHD_MO.avif"
+  }
+},
+{
+  "model": "products.productimage",
+  "pk": 5,
+  "fields": {
+    "product": 5,
+    "image": "product_images/gallery/Rich-Goat-Curry-Cut-Small-16-20-Pieces-pr_nbzk1sx8n3k-min-compres_7gDDDDX.jpg"
+  }
+},
+{
+  "model": "products.productimage",
+  "pk": 6,
+  "fields": {
+    "product": 5,
+    "image": "product_images/gallery/ueamtdi_chilli-chicken_625x300_16_March_22.webp"
+  }
+},
+{
+  "model": "products.productimage",
+  "pk": 7,
+  "fields": {
+    "product": 7,
+    "image": "product_images/gallery/images_6.jpg"
+  }
+},
+{
+  "model": "products.productimage",
+  "pk": 8,
+  "fields": {
+    "product": 13,
+    "image": "product_images/gallery/images_9.jpg"
+  }
+},
+{
+  "model": "products.productimage",
+  "pk": 9,
+  "fields": {
+    "product": 13,
+    "image": "product_images/gallery/images_10.jpg"
+  }
+},
+{
+  "model": "products.productimage",
+  "pk": 10,
+  "fields": {
+    "product": 13,
+    "image": "product_images/gallery/images_11.jpg"
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$3HoPPaPQG9x6DqloYLfzpf$XtsdhXFZiaEXRe+x9q+u1Vh06hsqsH7+xWkvY2asDCI=",
+    "last_login": "2026-02-16T10:54:44.622Z",
+    "is_superuser": true,
+    "username": "admin",
+    "first_name": "",
+    "last_name": "",
+    "email": "admin@gmail.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-02-16T10:54:34.222Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$UH7QYnJAN9vxrKMbAlbCrN$AuVfVn9eyYtvMCbzT0On0DO1wy4xBK8InptI4j60OtE=",
+    "last_login": null,
+    "is_superuser": true,
+    "username": "coder1",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-02-18T08:49:36Z",
+    "groups": [],
+    "user_permissions": [
+      [
+        "add_logentry",
+        "admin",
+        "logentry"
+      ],
+      [
+        "change_logentry",
+        "admin",
+        "logentry"
+      ],
+      [
+        "delete_logentry",
+        "admin",
+        "logentry"
+      ],
+      [
+        "view_logentry",
+        "admin",
+        "logentry"
+      ],
+      [
+        "add_group",
+        "auth",
+        "group"
+      ],
+      [
+        "change_group",
+        "auth",
+        "group"
+      ],
+      [
+        "delete_group",
+        "auth",
+        "group"
+      ],
+      [
+        "view_group",
+        "auth",
+        "group"
+      ],
+      [
+        "add_permission",
+        "auth",
+        "permission"
+      ],
+      [
+        "change_permission",
+        "auth",
+        "permission"
+      ],
+      [
+        "delete_permission",
+        "auth",
+        "permission"
+      ],
+      [
+        "view_permission",
+        "auth",
+        "permission"
+      ],
+      [
+        "add_user",
+        "auth",
+        "user"
+      ],
+      [
+        "change_user",
+        "auth",
+        "user"
+      ],
+      [
+        "delete_user",
+        "auth",
+        "user"
+      ],
+      [
+        "view_user",
+        "auth",
+        "user"
+      ],
+      [
+        "add_cart",
+        "cart",
+        "cart"
+      ],
+      [
+        "change_cart",
+        "cart",
+        "cart"
+      ],
+      [
+        "delete_cart",
+        "cart",
+        "cart"
+      ],
+      [
+        "view_cart",
+        "cart",
+        "cart"
+      ],
+      [
+        "add_cartitem",
+        "cart",
+        "cartitem"
+      ],
+      [
+        "change_cartitem",
+        "cart",
+        "cartitem"
+      ],
+      [
+        "delete_cartitem",
+        "cart",
+        "cartitem"
+      ],
+      [
+        "view_cartitem",
+        "cart",
+        "cartitem"
+      ],
+      [
+        "add_contenttype",
+        "contenttypes",
+        "contenttype"
+      ],
+      [
+        "change_contenttype",
+        "contenttypes",
+        "contenttype"
+      ],
+      [
+        "delete_contenttype",
+        "contenttypes",
+        "contenttype"
+      ],
+      [
+        "view_contenttype",
+        "contenttypes",
+        "contenttype"
+      ],
+      [
+        "add_product",
+        "products",
+        "product"
+      ],
+      [
+        "change_product",
+        "products",
+        "product"
+      ],
+      [
+        "delete_product",
+        "products",
+        "product"
+      ],
+      [
+        "view_product",
+        "products",
+        "product"
+      ],
+      [
+        "add_productimage",
+        "products",
+        "productimage"
+      ],
+      [
+        "change_productimage",
+        "products",
+        "productimage"
+      ],
+      [
+        "delete_productimage",
+        "products",
+        "productimage"
+      ],
+      [
+        "view_productimage",
+        "products",
+        "productimage"
+      ],
+      [
+        "add_session",
+        "sessions",
+        "session"
+      ],
+      [
+        "change_session",
+        "sessions",
+        "session"
+      ],
+      [
+        "delete_session",
+        "sessions",
+        "session"
+      ],
+      [
+        "view_session",
+        "sessions",
+        "session"
+      ]
+    ]
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$497N0SAH3O95qAjN613X9y$BmrMHPYRZAFF75OH8Ol3ztxuGuhniSwdz+GalVBk7JE=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "alukalu",
+    "first_name": "",
+    "last_name": "",
+    "email": "narif@mailinator.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-02-18T08:57:56.443Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "4uffwc5xen41far1uzbvgyy4tquwgamd",
+  "fields": {
+    "session_data": ".eJxVjEEOwiAURO_C2hBqwR9cuvcMZODzpWogKe3KeHdt0oVu5703LxWwLiWsPc9hYnVWgzr8bhHpkesG-I56azq1usxT1Juid9r1tXF-Xnb376Cgl2-djEnZ0pAtoiFDo_ME9jJGRBF2AnFytKPxJyF4ByeJKQrATMRWvT8EPTlV:1vrwFY:YUFrDkMYhk3VK0cgOzNxzbKvb19bYlCcwcUYEuOvyXM",
+    "expire_date": "2026-03-02T10:54:44.630Z"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 1,
+  "fields": {
+    "action_time": "2026-02-16T10:57:46.055Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "products",
+      "product"
+    ],
+    "object_id": "1",
+    "object_repr": "Iphone 17 Pro max",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 2,
+  "fields": {
+    "action_time": "2026-02-16T11:05:55.296Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "products",
+      "product"
+    ],
+    "object_id": "1",
+    "object_repr": "Iphone 17 Pro max",
+    "action_flag": 2,
+    "change_message": "[]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 3,
+  "fields": {
+    "action_time": "2026-02-16T11:06:07.978Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "products",
+      "product"
+    ],
+    "object_id": "1",
+    "object_repr": "Iphone 17 Pro max",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 4,
+  "fields": {
+    "action_time": "2026-02-16T11:06:33.981Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "products",
+      "product"
+    ],
+    "object_id": "2",
+    "object_repr": "iPhone 17 Pro Max",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 5,
+  "fields": {
+    "action_time": "2026-02-16T11:14:17.126Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "products",
+      "product"
+    ],
+    "object_id": "2",
+    "object_repr": "iPhone 17 Pro Max",
+    "action_flag": 2,
+    "change_message": "[{\"added\": {\"name\": \"product image\", \"object\": \"Image for iPhone 17 Pro Max\"}}, {\"added\": {\"name\": \"product image\", \"object\": \"Image for iPhone 17 Pro Max\"}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 6,
+  "fields": {
+    "action_time": "2026-02-16T11:15:10.652Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "products",
+      "product"
+    ],
+    "object_id": "2",
+    "object_repr": "iPhone 17 Pro Max",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"name\": \"product image\", \"object\": \"Image for iPhone 17 Pro Max\", \"fields\": [\"Image\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 7,
+  "fields": {
+    "action_time": "2026-02-16T11:18:10.528Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "products",
+      "product"
+    ],
+    "object_id": "3",
+    "object_repr": "iphone 12",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 8,
+  "fields": {
+    "action_time": "2026-02-16T13:30:55.135Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "products",
+      "product"
+    ],
+    "object_id": "4",
+    "object_repr": "71200 Samsung tv",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}, {\"added\": {\"name\": \"product image\", \"object\": \"Image for 71200 Samsung tv\"}}, {\"added\": {\"name\": \"product image\", \"object\": \"Image for 71200 Samsung tv\"}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 9,
+  "fields": {
+    "action_time": "2026-02-16T13:37:52.936Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "products",
+      "product"
+    ],
+    "object_id": "5",
+    "object_repr": "Goat Meat",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}, {\"added\": {\"name\": \"product image\", \"object\": \"Image for Goat Meat\"}}, {\"added\": {\"name\": \"product image\", \"object\": \"Image for Goat Meat\"}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 10,
+  "fields": {
+    "action_time": "2026-02-16T13:52:19.791Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "products",
+      "product"
+    ],
+    "object_id": "6",
+    "object_repr": "masu",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 11,
+  "fields": {
+    "action_time": "2026-02-16T16:13:38.736Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "products",
+      "product"
+    ],
+    "object_id": "7",
+    "object_repr": "Nepal Jersy",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}, {\"added\": {\"name\": \"product image\", \"object\": \"Image for Nepal Jersy\"}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 12,
+  "fields": {
+    "action_time": "2026-02-16T16:15:55.017Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "products",
+      "product"
+    ],
+    "object_id": "8",
+    "object_repr": "mini dress",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 13,
+  "fields": {
+    "action_time": "2026-02-16T16:16:40.204Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "products",
+      "product"
+    ],
+    "object_id": "9",
+    "object_repr": "halter dress",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 14,
+  "fields": {
+    "action_time": "2026-02-16T16:20:34.131Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "products",
+      "product"
+    ],
+    "object_id": "10",
+    "object_repr": "Gucci 18k golden necklace",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 15,
+  "fields": {
+    "action_time": "2026-02-16T16:21:17.647Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "products",
+      "product"
+    ],
+    "object_id": "11",
+    "object_repr": "LV Neckwear",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 16,
+  "fields": {
+    "action_time": "2026-02-16T16:21:45.993Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "products",
+      "product"
+    ],
+    "object_id": "12",
+    "object_repr": "Diamond Ring",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 17,
+  "fields": {
+    "action_time": "2026-02-16T16:31:11.263Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "products",
+      "product"
+    ],
+    "object_id": "2",
+    "object_repr": "iPhone 17 Pro Max",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Description\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 18,
+  "fields": {
+    "action_time": "2026-02-17T05:26:10.316Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "products",
+      "product"
+    ],
+    "object_id": "2",
+    "object_repr": "iPhone 17 Pro Max",
+    "action_flag": 2,
+    "change_message": "[]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 19,
+  "fields": {
+    "action_time": "2026-02-18T08:49:37.379Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "auth",
+      "user"
+    ],
+    "object_id": "2",
+    "object_repr": "coder1",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 20,
+  "fields": {
+    "action_time": "2026-02-18T08:49:46.665Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "auth",
+      "user"
+    ],
+    "object_id": "2",
+    "object_repr": "coder1",
+    "action_flag": 2,
+    "change_message": "[]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 21,
+  "fields": {
+    "action_time": "2026-02-18T08:50:47.642Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "auth",
+      "user"
+    ],
+    "object_id": "2",
+    "object_repr": "coder1",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Staff status\", \"Superuser status\", \"User permissions\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 22,
+  "fields": {
+    "action_time": "2026-02-18T09:06:46.452Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "products",
+      "product"
+    ],
+    "object_id": "13",
+    "object_repr": "OLd monk",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}, {\"added\": {\"name\": \"product image\", \"object\": \"Image for OLd monk\"}}, {\"added\": {\"name\": \"product image\", \"object\": \"Image for OLd monk\"}}, {\"added\": {\"name\": \"product image\", \"object\": \"Image for OLd monk\"}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 23,
+  "fields": {
+    "action_time": "2026-02-18T09:07:06.571Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "products",
+      "product"
+    ],
+    "object_id": "13",
+    "object_repr": "Old monk",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Title\"]}}]"
+  }
+},
+{
+  "model": "cart.cart",
+  "pk": 1,
+  "fields": {
+    "user": null,
+    "created_at": "2026-02-16T15:19:54.525Z",
+    "updated_at": "2026-02-16T15:19:54.525Z"
+  }
+}
+]

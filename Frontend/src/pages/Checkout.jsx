@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { useCartStore } from '../store/useCartStore';
 import { useAuthStore } from '../store/useAuthStore'; // Added to track login state
 import { ArrowLeft, CheckCircle, CreditCard, Download, Hash, Loader2, ShoppingBag } from 'lucide-react';
@@ -17,6 +18,7 @@ export default function Checkout() {
   // Memoize total to ensure it re-calculates correctly when cartItems update
   const totalAmount = useMemo(() => {
     return getTotalPrice();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cartItems, getTotalPrice]);
 
   useEffect(() => {
@@ -29,39 +31,35 @@ export default function Checkout() {
     loadData();
   }, [fetchCartCount, token]); // Re-run if token changes (login/logout)
 
-  const handleDone = () => {
+  const handleDone = async () => {
     if (!transactionId.trim()) {
       triggerToast("Please enter the Transaction ID first!");
       return;
     }
-    
     if (totalAmount <= 0) {
       triggerToast("Cannot process an empty order.");
       return;
     }
-
-    console.log("Submitting Order:", {
-      items: cartItems,
-      total: totalAmount,
-      transaction_id: transactionId
-    });
-    
-    // Here you would typically send an axios.post to your /api/orders/ endpoint
-    clearCart();
-    triggerToast("Payment submitted for verification!");
-    navigate('/');
+    try {
+      await axios.post('http://127.0.0.1:8000/api/payments/submit/', {
+        transaction_id: transactionId,
+        total_amount: totalAmount,
+        items: cartItems.map(item => ({
+          product_id: item.product?.id || item.id,
+          product_name: item.product?.title || item.product_name || 'Unknown',
+          product_price: item.product?.price || item.product_price || 0,
+          quantity: item.quantity,
+        }))
+      });
+      await clearCart();
+      triggerToast("Payment submitted! Verification takes 5–10 minutes.");
+      navigate('/');
+    } catch (err) {
+      const msg = err.response?.data?.error || "Submission failed. Please try again.";
+      triggerToast(msg);
+    }
   };
-
-  // If loading for the first time
-  if (loading && cartItems.length === 0) {
-    return (
-      <div className="h-screen flex flex-col items-center justify-center bg-gray-50">
-        <Loader2 className="w-12 h-12 text-blue-600 animate-spin mb-4" />
-        <p className="text-gray-400 font-black uppercase tracking-widest text-sm">Loading Secure Payment...</p>
-      </div>
-    );
-  }
-
+    
   // If not loading and still empty, redirect or show empty state
   if (!loading && cartItems.length === 0) {
     return (

@@ -4,18 +4,38 @@ from .models import Cart, CartItem
 from products.models import Product
 from django.db.models import Sum
 
-# Helper function to get the total quantity of items in the cart
-def get_current_cart_count(cart):
-    # Sums up all 'quantity' fields for items in this cart
+def get_or_create_cart(request):
+    """
+    If the user is logged in, get or create a cart tied to their account.
+    If they are a guest, use a session-based cart ID stored in their session.
+    """
+    if request.user.is_authenticated:
+        cart, _ = Cart.objects.get_or_create(user=request.user)
+        return cart
+    else:
+        # Guest cart: store the cart ID in the session
+        cart_id = request.session.get('guest_cart_id')
+        if cart_id:
+            try:
+                return Cart.objects.get(id=cart_id, user=None)
+            except Cart.DoesNotExist:
+                pass
+        # Create a new guest cart and save its ID to the session
+        cart = Cart.objects.create(user=None)
+        request.session['guest_cart_id'] = cart.id
+        return cart
+    
+def get_cart_count(cart):
     total = CartItem.objects.filter(cart=cart).aggregate(Sum('quantity'))['quantity__sum']
     return total if total else 0
+
 
 @api_view(['POST'])
 def add_to_cart(request):
     product_id = request.data.get('product_id')
     quantity = int(request.data.get('quantity', 1))
     
-    cart, _ = Cart.objects.get_or_create(id=1) 
+    cart = get_or_create_cart(request)
     
     try:
         product = Product.objects.get(id=product_id)
@@ -30,56 +50,60 @@ def add_to_cart(request):
         cart_item.quantity = quantity
         
     cart_item.save()
-
-    # Get the fresh count after saving
-    current_count = get_current_cart_count(cart)
+    
 
     return Response({
         "message": f"Added {product.title} to cart!",
-        "cart_count": current_count  # Send new count to React
+        "cart_count": get_cart_count(cart)
     })
+
 
 @api_view(['GET'])
 def get_cart(request):
-    try:
-        cart = Cart.objects.get(id=1)
-        items = CartItem.objects.filter(cart=cart)
-        
-        cart_data = []
-        grand_total = 0
-        for item in items:
-            item_total = item.product.price * item.quantity
-            grand_total += item_total
-            cart_data.append({
-                "id": item.id,
-                "product_name": item.product.title,
-                "product_price": float(item.product.price),
-                "product_image": item.product.image.url if item.product.image else None,
-                "quantity": item.quantity,
-                "item_total": float(item_total)
-            })
-            
-        return Response({
-            "items": cart_data, 
-            "grand_total": float(grand_total),
-            "cart_count": get_current_cart_count(cart)
+    cart = get_or_create_cart(request)
+    items = CartItem.objects.filter(cart=cart).select_related('product')
+
+    cart_data = []
+    grand_total = 0
+    for item in items:
+        item_total = item.product.price * item.quantity
+        grand_total += item_total
+        cart_data.append({
+            "id": item.id,
+            "product_id": item.product.id,
+            "product_name": item.product.title,
+            "product_price": float(item.product.price),
+            "product_image": item.product.image.url if item.product.image else None,
+            "quantity": item.quantity,
+            "item_total": float(item_total)
         })
-    except Cart.DoesNotExist:
-        return Response({"items": [], "grand_total": 0, "cart_count": 0})
+
+    return Response({
+        "items": cart_data,
+        "grand_total": float(grand_total),
+        "cart_count": get_cart_count(cart)
+    })
+
+
+@api_view(['POST'])
+def clear_cart(request):
+    cart = get_or_create_cart(request)
+    CartItem.objects.filter(cart=cart).delete()
+    return Response({'message': 'Cart cleared'}, status=200)
+
 
 @api_view(['DELETE'])
 def remove_cart_item(request, item_id):
     try:
         item = CartItem.objects.get(id=item_id)
-        cart = item.cart # Save reference to the cart before deleting item
+        # Security check: make sure this item belongs to the requester's cart
+        cart = get_or_create_cart(request)
+        if item.cart != cart:
+            return Response({"error": "Not allowed"}, status=403)
         item.delete()
-        
-        # Get fresh count after deletion
-        current_count = get_current_cart_count(cart)
-        
         return Response({
             "message": "Item removed",
-            "cart_count": current_count # Send new count so Navbar updates
-        }, status=200) # Changed to 200 to allow sending data back
+            "cart_count": get_cart_count(cart)
+        }, status=200)
     except CartItem.DoesNotExist:
         return Response({"error": "Item not found"}, status=404)

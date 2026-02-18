@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ShoppingCart, Zap, Search, LogOut, Wine } from 'lucide-react'; // Added Wine icon
+import { ShoppingCart, Zap, Search, LogOut, Wine, UserCircle } from 'lucide-react'; // Added Wine icon
 import { useCartStore } from '../store/useCartStore';
 import { useAuthStore } from '../store/useAuthStore';
 
@@ -100,15 +100,36 @@ export default function Navbar() {
 
           {token ? (
             <div className="flex items-center gap-4">
-               <div className="hidden sm:flex flex-col items-end">
+              <div className="hidden sm:flex flex-col items-end">
                 <span className={`text-[10px] font-black uppercase tracking-widest ${isLiquorMode ? 'text-purple-500/60' : 'text-gray-400'}`}>Logged in as</span>
-                <span className={`text-sm font-bold leading-none ${isLiquorMode ? 'text-purple-200' : 'text-gray-900'}`}>{user?.username}</span>
+                <Link to="/profile" className={`text-sm font-bold leading-none hover:underline ${isLiquorMode ? 'text-purple-200' : 'text-gray-900'}`}>{user?.username}</Link>
+                {user?.is_staff && (
+                <Link
+                  to="/admin-dashboard"
+                  className="flex items-center gap-2 p-2.5 rounded-xl transition-all font-bold text-sm bg-gray-50 text-gray-700 hover:text-purple-600 hover:bg-purple-50"
+                >
+                  <span className="hidden md:block text-xs">Dashboard</span>
+                </Link>
+              )}
               </div>
-              <button 
-                onClick={logout} 
+              <Link
+                to="/profile"
                 className={`flex items-center gap-2 p-2.5 rounded-xl transition-all font-bold text-sm ${
-                  isLiquorMode 
-                    ? 'bg-gray-900 text-purple-400 hover:bg-red-900/20 hover:text-red-400' 
+                  isLiquorMode
+                    ? 'bg-gray-900 text-purple-400 hover:bg-purple-900/30'
+                    : 'bg-gray-50 text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+                }`}
+              >
+                
+                <UserCircle size={20} />
+                <span className="hidden md:block">Profile</span>
+              </Link>
+
+              <button
+                onClick={logout}
+                className={`flex items-center gap-2 p-2.5 rounded-xl transition-all font-bold text-sm ${
+                  isLiquorMode
+                    ? 'bg-gray-900 text-purple-400 hover:bg-red-900/20 hover:text-red-400'
                     : 'bg-gray-50 text-gray-700 hover:text-red-600 hover:bg-red-50'
                 }`}
               >
@@ -118,8 +139,8 @@ export default function Navbar() {
             </div>
           ) : (
             <Link to="/login" className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all shadow-md active:scale-95 ${
-              isLiquorMode 
-                ? 'bg-purple-600 text-white hover:bg-purple-500 shadow-purple-900/40' 
+              isLiquorMode
+                ? 'bg-purple-600 text-white hover:bg-purple-500 shadow-purple-900/40'
                 : 'bg-gray-900 text-white hover:bg-blue-600'
             }`}>
               Login

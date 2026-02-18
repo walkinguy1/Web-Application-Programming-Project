@@ -15,8 +15,7 @@ export default function Home() {
   const isLiquorMode = selectedCategory === "Liquor";
 
   useEffect(() => {
-    // Fetch from your Django API
-    axios.get('http://127.0.0.1:8000/api/products/') 
+    axios.get('http://127.0.0.1:8000/api/products/')
       .then(res => {
         setProducts(res.data);
         setLoading(false);
@@ -26,6 +25,12 @@ export default function Home() {
         setLoading(false);
       });
   }, []);
+
+  // Clear search when category changes so results don't bleed across categories
+  useEffect(() => {
+    setSearchQuery('');
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedCategory]);
 
   // IMPROVED FILTER LOGIC
   const filteredProducts = products.filter((product) => {

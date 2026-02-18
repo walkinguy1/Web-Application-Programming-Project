@@ -7,7 +7,10 @@ import ProductDetail from './pages/ProductDetail';
 import Cart from './pages/Cart';
 import Checkout from './pages/Checkout'; 
 import Login from './pages/Login';
+import Register from './pages/Register';
+import Profile from './pages/Profile';
 import Toast from './components/Toast';
+import AdminDashboard from './pages/AdminDashboard';
 import { useAuthStore } from './store/useAuthStore';
 import { useCartStore } from './store/useCartStore'; // 1. Import Cart Store
 
@@ -55,13 +58,16 @@ function App() {
               path="/login" 
               element={!token ? <Login /> : <Navigate to="/" />} 
             />
-            <Route path="/register" element={<Login />} />
+            <Route path="/register" element={!token ? <Register /> : <Navigate to="/" />} />
 
             {/* Protected Route */}
             <Route 
               path="/checkout" 
               element={token ? <Checkout /> : <Navigate to="/login" replace />} 
             />
+            <Route path="/profile" element={token ? <Profile /> : <Navigate to="/login" replace />} />
+
+            <Route path="/admin-dashboard" element={token ? <AdminDashboard /> : <Navigate to="/login" replace />} />
 
             {/* 404 Route */}
             <Route 
