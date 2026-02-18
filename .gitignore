@@ -14,8 +14,8 @@ __pycache__/
 *.pyc
 
 # Database
-db.sqlite3
-Backend/db.sqlite3
+# db.sqlite3
+# Backend/db.sqlite3
 
 # Media files (optional if you don’t want images in repo)
 media/
