@@ -1,31 +1,91 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
 import ProductDetail from './pages/ProductDetail';
 import Cart from './pages/Cart';
+import Checkout from './pages/Checkout'; 
+import Login from './pages/Login';
 import Toast from './components/Toast';
+import { useAuthStore } from './store/useAuthStore';
+import { useCartStore } from './store/useCartStore'; // 1. Import Cart Store
+
+// HELPER: Auto-scroll to top on every route change
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+}
 
 function App() {
+  const { token } = useAuthStore();
+  
+  // 2. Pull the selectedCategory to determine the theme
+  const { selectedCategory } = useCartStore();
+  const isLiquorMode = selectedCategory === "Liquor";
+
   return (
     <Router>
-      <div className="min-h-screen w-full bg-white flex flex-col">
-        {/* Navbar stays at the top */}
-        <Navbar />
+      <ScrollToTop />
+      
+      {/* 3. Changed bg-white to dynamic classes with transition */}
+      <div className={`min-h-screen w-full flex flex-col font-sans antialiased transition-colors duration-700 ease-in-out ${
+        isLiquorMode 
+          ? 'bg-gray-950 text-white' // Night Theme
+          : 'bg-white text-gray-900' // Day Theme
+      }`}>
         
-        {/* The Toast is globally accessible and sits over the UI */}
+        {/* Persistent UI Elements */}
+        <Navbar />
         <Toast />
-
-        {/* main flex-grow ensures footer stays at bottom even on short pages */}
+        
+        {/* Main Content Area */}
         <main className="flex-grow">
           <Routes>
+            {/* Public Routes */}
             <Route path="/" element={<Home />} />
             <Route path="/product/:id" element={<ProductDetail />} />
             <Route path="/cart" element={<Cart />} />
+            
+            {/* Auth Routes */}
+            <Route 
+              path="/login" 
+              element={!token ? <Login /> : <Navigate to="/" />} 
+            />
+            <Route path="/register" element={<Login />} />
+
+            {/* Protected Route */}
+            <Route 
+              path="/checkout" 
+              element={token ? <Checkout /> : <Navigate to="/login" replace />} 
+            />
+
+            {/* 404 Route */}
+            <Route 
+              path="*" 
+              element={
+                <div className="min-h-[60vh] flex flex-col items-center justify-center text-center p-20">
+                  <h1 className={`text-9xl font-black transition-colors ${isLiquorMode ? 'text-gray-800' : 'text-gray-100'}`}>404</h1>
+                  <p className="text-xl font-bold text-gray-400 -mt-8 uppercase tracking-widest">
+                    Page Not Found
+                  </p>
+                  <button 
+                    onClick={() => window.location.href = '/'}
+                    className={`mt-6 px-8 py-3 rounded-2xl font-bold transition-all ${
+                      isLiquorMode ? 'bg-purple-600 hover:bg-purple-500' : 'bg-blue-600 hover:bg-black'
+                    } text-white`}
+                  >
+                    Back to Home
+                  </button>
+                </div>
+              } 
+            />
           </Routes>
         </main>
 
-        {/* Footer stays at the bottom */}
         <Footer />
       </div>
     </Router>

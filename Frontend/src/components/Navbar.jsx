@@ -1,44 +1,66 @@
 import React, { useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom'; // Import useLocation
-import { ShoppingCart, Zap, Search, User, LogOut } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { ShoppingCart, Zap, Search, LogOut, Wine } from 'lucide-react'; // Added Wine icon
 import { useCartStore } from '../store/useCartStore';
+import { useAuthStore } from '../store/useAuthStore';
 
 export default function Navbar() {
   const { 
     cartCount, 
     fetchCartCount, 
-    user, 
-    logout, 
     searchQuery, 
     setSearchQuery,
     selectedCategory,
     setCategory 
   } = useCartStore();
 
-  // Initialize the location hook
+  const { user, token, logout } = useAuthStore();
   const location = useLocation();
+  const navigate = useNavigate();
 
-  // Categories list
-  const categories = ["All", "Electronics", "Jewelry", "Men's Clothing", "Women's Clothing"];
+  const categories = ["All", "Electronics", "Jewelry", "Men's Clothing", "Women's Clothing", "Liquor"];
+
+  // THEME CHECK: Is the user currently in the Liquor section?
+  const isLiquorMode = selectedCategory === "Liquor";
 
   useEffect(() => {
     fetchCartCount();
   }, [fetchCartCount]);
 
-  // Check if the current page is the cart page
-  const isCartPage = location.pathname === '/cart';
+  const isHiddenPage = location.pathname === '/cart' || location.pathname === '/checkout';
 
   return (
-    <header className="sticky top-0 z-50 w-full shadow-sm">
+    <header className={`sticky top-0 z-50 w-full shadow-sm transition-all duration-500 ${
+      isLiquorMode ? 'bg-black text-white' : 'bg-white'
+    }`}>
+      
       {/* MAIN NAV BAR */}
-      <nav className="bg-white/90 backdrop-blur-md py-3 px-6 md:px-10 flex justify-between items-center border-b border-gray-100">
+      <nav className={`backdrop-blur-md py-3 px-6 md:px-10 flex justify-between items-center border-b transition-colors duration-500 ${
+        isLiquorMode ? 'bg-black/90 border-purple-900/50' : 'bg-white/90 border-gray-100'
+      }`}>
         
-        {/* LOGO */}
-        <Link to="/" className="flex items-center gap-2 shrink-0">
-          <div className="bg-blue-600 p-1.5 rounded-lg">
-            <Zap size={22} className="text-white fill-current" />
+        {/* LOGO SECTION: Changes from ZAPP (Blue) to JHAPP (Purple/Wine) */}
+        <Link 
+          to="/" 
+          onClick={() => setCategory("All")}
+          className="flex items-center gap-2 shrink-0"
+        >
+          <div className={`p-1.5 rounded-lg transition-all duration-500 shadow-lg ${
+            isLiquorMode 
+              ? 'bg-purple-600 shadow-purple-500/40 animate-pulse' 
+              : 'bg-blue-600'
+          }`}>
+            {isLiquorMode ? (
+              <Wine size={22} className="text-white fill-current" />
+            ) : (
+              <Zap size={22} className="text-white fill-current" />
+            )}
           </div>
-          <span className="text-2xl font-black text-gray-900 tracking-tighter uppercase">ZAPPSTORE</span>
+          <span className={`text-2xl font-black tracking-tighter uppercase transition-all duration-500 ${
+            isLiquorMode ? 'text-purple-400 italic tracking-widest' : 'text-gray-900'
+          }`}>
+            {isLiquorMode ? "JHYAPPSTORE" : "ZAPPSTORE"}
+          </span>
         </Link>
 
         {/* SEARCH BAR */}
@@ -47,8 +69,12 @@ export default function Navbar() {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
             <input 
               type="text" 
-              placeholder="Search products..." 
-              className="w-full bg-gray-100 border-none rounded-2xl py-2.5 pl-12 pr-4 text-sm font-medium focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all outline-none"
+              placeholder={isLiquorMode ? "Search premium spirits..." : "Search products..."}
+              className={`w-full rounded-2xl py-2.5 pl-12 pr-4 text-sm font-medium transition-all outline-none border-none ${
+                isLiquorMode 
+                  ? 'bg-gray-900 text-white focus:ring-2 focus:ring-purple-500/40' 
+                  : 'bg-gray-100 text-gray-900 focus:ring-2 focus:ring-blue-500/20 focus:bg-white'
+              }`}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -57,43 +83,70 @@ export default function Navbar() {
 
         {/* ACTIONS */}
         <div className="flex items-center gap-5">
-          <Link to="/cart" className="relative p-2 hover:bg-gray-100 rounded-full transition-all group">
-            <ShoppingCart size={26} className="text-gray-700 group-hover:text-blue-600" />
+          <Link to="/cart" className={`relative p-2 rounded-full transition-all group ${
+            isLiquorMode ? 'hover:bg-purple-900/30' : 'hover:bg-gray-100'
+          }`}>
+            <ShoppingCart size={26} className={`transition-colors ${
+              isLiquorMode ? 'text-purple-400 group-hover:text-purple-200' : 'text-gray-700 group-hover:text-blue-600'
+            }`} />
             {cartCount > 0 && (
-              <span className="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-black h-5 w-5 flex items-center justify-center rounded-full ring-2 ring-white">
+              <span className={`absolute top-0 right-0 text-white text-[10px] font-black h-5 w-5 flex items-center justify-center rounded-full ring-2 ${
+                isLiquorMode ? 'bg-purple-600 ring-black' : 'bg-red-500 ring-white'
+              }`}>
                 {cartCount}
               </span>
             )}
           </Link>
 
-          {user ? (
-            <button onClick={logout} className="flex items-center gap-2 text-gray-700 hover:text-red-600 font-bold text-sm">
-              <LogOut size={20} />
-              <span className="hidden sm:block text-gray-900">{user.username}</span>
-            </button>
+          {token ? (
+            <div className="flex items-center gap-4">
+               <div className="hidden sm:flex flex-col items-end">
+                <span className={`text-[10px] font-black uppercase tracking-widest ${isLiquorMode ? 'text-purple-500/60' : 'text-gray-400'}`}>Logged in as</span>
+                <span className={`text-sm font-bold leading-none ${isLiquorMode ? 'text-purple-200' : 'text-gray-900'}`}>{user?.username}</span>
+              </div>
+              <button 
+                onClick={logout} 
+                className={`flex items-center gap-2 p-2.5 rounded-xl transition-all font-bold text-sm ${
+                  isLiquorMode 
+                    ? 'bg-gray-900 text-purple-400 hover:bg-red-900/20 hover:text-red-400' 
+                    : 'bg-gray-50 text-gray-700 hover:text-red-600 hover:bg-red-50'
+                }`}
+              >
+                <LogOut size={20} />
+                <span className="hidden md:block">Logout</span>
+              </button>
+            </div>
           ) : (
-            <Link to="/login" className="bg-gray-900 text-white px-5 py-2 rounded-xl font-bold text-sm hover:bg-gray-800 transition-colors">
+            <Link to="/login" className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all shadow-md active:scale-95 ${
+              isLiquorMode 
+                ? 'bg-purple-600 text-white hover:bg-purple-500 shadow-purple-900/40' 
+                : 'bg-gray-900 text-white hover:bg-blue-600'
+            }`}>
               Login
             </Link>
           )}
         </div>
       </nav>
 
-      {/* CATEGORY SUB-NAV BAR - ONLY SHOW IF NOT ON CART PAGE */}
-      {!isCartPage && (
-        <div className="bg-white border-b border-gray-100 overflow-x-auto no-scrollbar animate-in fade-in slide-in-from-top-1 duration-300">
+      {/* CATEGORY SUB-NAV BAR */}
+      {!isHiddenPage && (
+        <div className={`transition-colors duration-500 border-b overflow-x-auto no-scrollbar animate-in fade-in slide-in-from-top-1 duration-300 ${
+          isLiquorMode ? 'bg-black border-purple-900/30' : 'bg-white border-gray-100'
+        }`}>
           <div className="max-w-7xl mx-auto px-6 md:px-10 flex gap-8 py-2">
             {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => {
                   setCategory(cat);
-                  setSearchQuery(""); // Clear search when switching categories
+                  setSearchQuery(""); 
+                  // If we are in Product Detail, we need to go home
+                  if(location.pathname !== '/') navigate('/');
                 }}
                 className={`text-xs font-extrabold uppercase tracking-widest whitespace-nowrap transition-all pb-1 border-b-2 ${
                   selectedCategory === cat 
-                  ? "text-blue-600 border-blue-600" 
-                  : "text-gray-400 border-transparent hover:text-gray-900"
+                  ? (isLiquorMode ? "text-purple-400 border-purple-400" : "text-blue-600 border-blue-600") 
+                  : (isLiquorMode ? "text-gray-600 border-transparent hover:text-purple-300" : "text-gray-400 border-transparent hover:text-gray-900")
                 }`}
               >
                 {cat}

@@ -1,26 +1,23 @@
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
+env/
 
-
-Backend/env/
-.env
 .vscode
 node_modules
 dist
-dist-ssr
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+
+# Virtual Environment
+env/
 Backend/env/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Database
+db.sqlite3
+Backend/db.sqlite3
+
+# Media files (optional if you don’t want images in repo)
+media/
+Backend/media/
+
+notes.md

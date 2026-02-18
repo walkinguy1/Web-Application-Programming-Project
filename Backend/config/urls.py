@@ -5,8 +5,13 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    
+    # Unified Auth: This now handles /api/auth/login/ AND /api/auth/register/
+    path('api/auth/', include('accounts.urls')), 
+    
+    # Store Endpoints
     path('api/products/', include('products.urls')), 
-    path('api/cart/', include('cart.urls')),  # This connects your cart app
+    path('api/cart/', include('cart.urls')),
 ]
 
 if settings.DEBUG:
