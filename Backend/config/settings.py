@@ -42,6 +42,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.filters.OrderingFilter',
     )
 }
 # Application definition
@@ -57,6 +58,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'django.contrib.admin',
     'django.contrib.auth',
+    'django_filters',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',

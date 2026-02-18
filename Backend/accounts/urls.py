@@ -14,7 +14,8 @@ urlpatterns = [
     path('register/', RegisterView.as_view(), name='auth_register'),
     
     # Login: /api/auth/login/ (Returns the JWT tokens)
-    path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('login/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
+
     
     # Refresh: /api/auth/token/refresh/
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
