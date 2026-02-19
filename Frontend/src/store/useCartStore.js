@@ -17,6 +17,13 @@ export const useCartStore = create((set, get) => ({
   selectedCategory: "All",
   setCategory: (category) => set({ selectedCategory: category }),
 
+  // SORT & FILTER STATE
+  sortOrder: "",
+  setSortOrder: (order) => set({ sortOrder: order }),
+  minPrice: "",
+  maxPrice: "",
+  setPriceRange: (min, max) => set({ minPrice: min, maxPrice: max }),
+
   // CART ACTIONS
   fetchCartCount: async () => {
     // We get the token directly from localStorage to ensure we're synced with AuthStore
