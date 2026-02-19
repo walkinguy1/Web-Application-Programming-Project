@@ -8,8 +8,74 @@ import { User, Mail, Calendar, Package, CheckCircle, Clock, XCircle, Edit3, Save
 
 const backendURL = 'http://127.0.0.1:8000';
 
+const ORDER_STEPS = ['pending', 'processing', 'shipped', 'delivered'];
+
+function OrderTimeline({ status }) {
+  if (status === 'cancelled') return (
+    <div className="flex items-center gap-2 text-red-500 font-bold text-xs uppercase tracking-widest mt-3">
+      <XCircle size={14} /> Order Cancelled
+    </div>
+  );
+
+  const currentStep = ORDER_STEPS.indexOf(status);
+
+  return (
+    <div className="flex items-center gap-1 mt-4">
+      {ORDER_STEPS.map((step, i) => (
+        <React.Fragment key={step}>
+          <div className="flex flex-col items-center gap-1">
+            <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black border-2 transition-all ${
+              i <= currentStep
+                ? 'bg-blue-600 border-blue-600 text-white'
+                : 'bg-white border-gray-200 text-gray-300'
+            }`}>
+              {i < currentStep ? '✓' : i + 1}
+            </div>
+            <span className={`text-[9px] font-black uppercase whitespace-nowrap ${
+              i <= currentStep ? 'text-blue-600' : 'text-gray-300'
+            }`}>
+              {step}
+            </span>
+          </div>
+          {i < ORDER_STEPS.length - 1 && (
+            <div className={`h-0.5 flex-1 mb-4 transition-all ${
+              i < currentStep ? 'bg-blue-600' : 'bg-gray-100'
+            }`} />
+          )}
+        </React.Fragment>
+      ))}
+    </div>
+  );
+}
+
+function StatusBadge({ status }) {
+  const colors = {
+    verified:   'bg-green-50 text-green-700 border-green-100',
+    rejected:   'bg-red-50 text-red-600 border-red-100',
+    pending:    'bg-yellow-50 text-yellow-700 border-yellow-100',
+    processing: 'bg-blue-50 text-blue-700 border-blue-100',
+    shipped:    'bg-purple-50 text-purple-700 border-purple-100',
+    delivered:  'bg-green-50 text-green-700 border-green-100',
+    cancelled:  'bg-red-50 text-red-600 border-red-100',
+  };
+
+  const icons = {
+    verified:  <CheckCircle size={12} />,
+    delivered: <CheckCircle size={12} />,
+    rejected:  <XCircle size={12} />,
+    cancelled: <XCircle size={12} />,
+  };
+
+  return (
+    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase border ${colors[status] || 'bg-gray-50 text-gray-500 border-gray-100'}`}>
+      {icons[status] || <Clock size={12} />}
+      {status}
+    </span>
+  );
+}
+
 export default function Profile() {
-  const { user, logout } = useAuthStore();
+  const { user } = useAuthStore();
   const { triggerToast } = useCartStore();
   const navigate = useNavigate();
 
@@ -40,6 +106,7 @@ export default function Profile() {
       }
     };
     fetchAll();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSave = async () => {
@@ -53,18 +120,6 @@ export default function Profile() {
     }
   };
 
-  const statusIcon = (status) => {
-    if (status === 'verified') return <CheckCircle size={14} className="text-green-500" />;
-    if (status === 'rejected') return <XCircle size={14} className="text-red-400" />;
-    return <Clock size={14} className="text-yellow-500" />;
-  };
-
-  const statusColor = (status) => {
-    if (status === 'verified') return 'bg-green-50 text-green-700 border-green-100';
-    if (status === 'rejected') return 'bg-red-50 text-red-600 border-red-100';
-    return 'bg-yellow-50 text-yellow-700 border-yellow-100';
-  };
-
   if (loading) return (
     <div className="flex justify-center items-center min-h-[60vh]">
       <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
@@ -74,10 +129,11 @@ export default function Profile() {
   return (
     <div className="max-w-4xl mx-auto px-6 py-12 space-y-8">
 
-      {/* PROFILE CARD */}
+      {/* ── PROFILE CARD ── */}
       <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm p-8">
         <div className="flex items-start justify-between mb-6">
           <div className="flex items-center gap-5">
+            {/* Avatar */}
             <div className="w-16 h-16 rounded-2xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-200">
               <span className="text-white text-2xl font-black uppercase">
                 {profile?.username?.[0] || 'U'}
@@ -92,6 +148,7 @@ export default function Profile() {
               <p className="text-gray-400 text-sm font-bold">@{profile?.username}</p>
             </div>
           </div>
+
           {!editing ? (
             <button
               onClick={() => setEditing(true)}
@@ -109,6 +166,7 @@ export default function Profile() {
           )}
         </div>
 
+        {/* Info view */}
         {!editing ? (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="flex items-center gap-3 bg-gray-50 p-4 rounded-2xl">
@@ -138,6 +196,7 @@ export default function Profile() {
             </div>
           </div>
         ) : (
+          /* Edit form */
           <div className="space-y-3">
             <div className="grid grid-cols-2 gap-3">
               <input
@@ -170,7 +229,7 @@ export default function Profile() {
         )}
       </div>
 
-      {/* ORDER HISTORY */}
+      {/* ── ORDER HISTORY ── */}
       <div>
         <h2 className="text-2xl font-black tracking-tighter uppercase text-gray-900 mb-4 flex items-center gap-3">
           <Package size={22} /> Order History
@@ -194,30 +253,41 @@ export default function Profile() {
           <div className="space-y-4">
             {payments.map(payment => (
               <div key={payment.id} className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-6">
-                <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
+
+                {/* Order header */}
+                <div className="flex items-start justify-between mb-4 flex-wrap gap-3">
                   <div>
                     <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Transaction ID</p>
                     <p className="font-black text-gray-900 font-mono">{payment.transaction_id}</p>
                   </div>
-                  <div className="text-right">
+                  <div className="text-right flex flex-col items-end gap-1">
                     <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">{payment.created_at}</p>
-                    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase border mt-1 ${statusColor(payment.status)}`}>
-                      {statusIcon(payment.status)} {payment.status}
-                    </span>
+                    <StatusBadge status={payment.status} />
                   </div>
                 </div>
-                <div className="space-y-2 mb-4">
+
+                {/* Order tracking timeline — shows delivery progress */}
+                <OrderTimeline status={payment.status} />
+
+                {/* Items list */}
+                <div className="space-y-2 mt-4 mb-4">
                   {payment.items.map((item, idx) => (
                     <div key={idx} className="flex justify-between text-sm text-gray-600">
-                      <span className="font-bold">{item.product_name} <span className="text-gray-400 font-medium">x{item.quantity}</span></span>
+                      <span className="font-bold">
+                        {item.product_name}
+                        <span className="text-gray-400 font-medium"> x{item.quantity}</span>
+                      </span>
                       <span className="font-black text-gray-800">${item.item_total.toFixed(2)}</span>
                     </div>
                   ))}
                 </div>
+
+                {/* Total */}
                 <div className="flex justify-between items-center border-t border-gray-100 pt-3">
                   <span className="text-xs font-black uppercase tracking-widest text-gray-400">Total Paid</span>
                   <span className="text-xl font-black text-blue-600">${payment.total_amount.toFixed(2)}</span>
                 </div>
+
               </div>
             ))}
           </div>

@@ -126,3 +126,23 @@ def get_all_payments(request):
         for p in payments
     ]
     return Response(data)
+
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def update_payment_status(request, payment_id):
+    """Admin only — verify or reject a payment."""
+    if not request.user.is_staff:
+        return Response({'error': 'Forbidden'}, status=403)
+
+    try:
+        payment = Payment.objects.get(id=payment_id)
+    except Payment.DoesNotExist:
+        return Response({'error': 'Payment not found'}, status=404)
+
+    new_status = request.data.get('status')
+    if new_status not in ['pending', 'verified', 'rejected']:
+        return Response({'error': 'Invalid status.'}, status=400)
+
+    payment.status = new_status
+    payment.save()
+    return Response({'message': f'Payment updated to {new_status}.'})

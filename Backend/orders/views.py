@@ -10,7 +10,6 @@ from products.models import Product
 @permission_classes([IsAuthenticated])
 def get_order_history(request):
     orders = Order.objects.filter(user=request.user).order_by('-created_at')
-
     data = []
     for order in orders:
         items_data = [
@@ -28,19 +27,15 @@ def get_order_history(request):
             'total_amount': float(order.total_amount),
             'transaction_id': order.transaction_id,
             'created_at': order.created_at.strftime('%b %d, %Y at %I:%M %p'),
+            'updated_at': order.updated_at.strftime('%b %d, %Y at %I:%M %p'),
             'items': items_data
         })
-
     return Response(data)
 
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_order(request):
-    """
-    Called automatically when a payment is submitted.
-    Creates an Order record from the cart items.
-    """
     items = request.data.get('items', [])
     total_amount = request.data.get('total_amount')
     transaction_id = request.data.get('transaction_id', '')
@@ -72,15 +67,35 @@ def create_order(request):
             quantity=item.get('quantity', 1)
         )
 
-    return Response({
-        'message': 'Order created successfully.',
-        'order_id': order.id
-    }, status=status.HTTP_201_CREATED)
+    return Response({'message': 'Order created.', 'order_id': order.id}, status=status.HTTP_201_CREATED)
+
+
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def update_order_status(request, order_id):
+    """Admin only — update an order's status."""
+    if not request.user.is_staff:
+        return Response({'error': 'Forbidden'}, status=403)
+
+    try:
+        order = Order.objects.get(id=order_id)
+    except Order.DoesNotExist:
+        return Response({'error': 'Order not found'}, status=404)
+
+    new_status = request.data.get('status')
+    valid = [s[0] for s in Order.STATUS_CHOICES]
+    if new_status not in valid:
+        return Response({'error': f'Invalid status. Choose from: {valid}'}, status=400)
+
+    order.status = new_status
+    order.save()
+    return Response({'message': f'Order #{order.id} updated to {new_status}.'})
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_all_orders(request):
-    """ Admin only — returns all orders from all users """
+    """Admin only — all orders from all users."""
     if not request.user.is_staff:
         return Response({'error': 'Forbidden'}, status=403)
 

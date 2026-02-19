@@ -84,6 +84,29 @@ def get_cart(request):
         "cart_count": get_cart_count(cart)
     })
 
+@api_view(['PATCH'])
+def update_cart_item(request, item_id):
+    """Change the quantity of a specific cart item."""
+    try:
+        item = CartItem.objects.get(id=item_id)
+        cart = get_or_create_cart(request)
+        if item.cart != cart:
+            return Response({"error": "Not allowed"}, status=403)
+
+        new_qty = int(request.data.get('quantity', 1))
+        if new_qty < 1:
+            return Response({"error": "Quantity must be at least 1"}, status=400)
+
+        item.quantity = new_qty
+        item.save()
+
+        return Response({
+            "message": "Quantity updated",
+            "cart_count": get_cart_count(cart)
+        })
+    except CartItem.DoesNotExist:
+        return Response({"error": "Item not found"}, status=404)
+
 
 @api_view(['POST'])
 def clear_cart(request):

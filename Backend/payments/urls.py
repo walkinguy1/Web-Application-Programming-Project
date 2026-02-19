@@ -9,4 +9,5 @@ urlpatterns = [
     path('history/', views.get_payment_history, name='payment_history'),
 
     path('all/', views.get_all_payments, name='all_payments'),   # admin only
+    path('<int:payment_id>/status/', views.update_payment_status, name='update_payment_status'),
 ]
