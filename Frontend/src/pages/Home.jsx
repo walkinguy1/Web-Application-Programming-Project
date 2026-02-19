@@ -9,6 +9,9 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
 
+  // NEW: Added state to track background updates without unmounting the whole page
+  const [isUpdating, setIsUpdating] = useState(false);
+
   const [localMin, setLocalMin] = useState('');
   const [localMax, setLocalMax] = useState('');
 
@@ -24,7 +27,13 @@ export default function Home() {
 
   // Fetch is only triggered by category, sort, and price — NOT search
   const fetchProducts = useCallback(() => {
-    setLoading(true);
+    // NEW: If we already have products, show a subtle loader instead of clearing the screen
+    if (products.length > 0) {
+      setIsUpdating(true);
+    } else {
+      setLoading(true);
+    }
+
     const params = new URLSearchParams();
     if (selectedCategory && selectedCategory !== 'All') params.append('category', selectedCategory);
     if (sortOrder) params.append('ordering', sortOrder);
@@ -35,12 +44,16 @@ export default function Home() {
       .then(res => {
         setProducts(res.data);
         setLoading(false);
+        // NEW: Turn off background update state
+        setIsUpdating(false);
       })
       .catch(err => {
         console.log("Backend error:", err);
         setLoading(false);
+        // NEW: Reset update state on error
+        setIsUpdating(false);
       });
-  }, [selectedCategory, sortOrder, minPrice, maxPrice]);
+  }, [selectedCategory, sortOrder, minPrice, maxPrice]); // Removed products.length to prevent infinite loops
 
   useEffect(() => {
     fetchProducts();
@@ -80,7 +93,8 @@ export default function Home() {
 
   const hasActiveFilters = sortOrder || minPrice || maxPrice;
 
-  if (loading) return (
+  // NEW: Only trigger full-page replacement if it's the absolute initial load
+  if (loading && products.length === 0) return (
     <div className={`flex flex-col justify-center items-center h-[60vh] transition-colors duration-500 ${isLiquorMode ? 'bg-gray-950' : 'bg-white'}`}>
       <div className={`w-12 h-12 border-4 rounded-full animate-spin ${isLiquorMode ? 'border-purple-500 border-t-transparent' : 'border-blue-600 border-t-transparent'}`}></div>
     </div>
@@ -229,26 +243,36 @@ export default function Home() {
           </div>
         )}
 
-        {/* PRODUCT GRID */}
-        {filteredProducts.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
-            {filteredProducts.map(p => (
-              <ProductCard key={p.id} product={p} />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-20">
-            <h3 className="text-2xl font-bold text-gray-400">
-              {searchQuery ? `No results for "${searchQuery}"` : `No ${selectedCategory} products found.`}
-            </h3>
-            <button
-              onClick={() => { setCategory("All"); handleClearFilters(); }}
-              className={`mt-4 font-bold underline ${isLiquorMode ? 'text-purple-400' : 'text-blue-600'}`}
-            >
-              Clear all filters
-            </button>
-          </div>
-        )}
+        {/* PRODUCT GRID — NEW: Wrapped in a relative div to allow a subtle background loader overlay */}
+        <div className="relative min-h-[400px]">
+          {/* NEW: Background updating spinner — keeps page scroll in place */}
+          {isUpdating && (
+            <div className="absolute inset-0 z-20 flex justify-center pt-20 bg-inherit/30 backdrop-blur-[1px]">
+               <div className={`w-10 h-10 border-4 rounded-full animate-spin ${isLiquorMode ? 'border-purple-500' : 'border-blue-600'} border-t-transparent`}></div>
+            </div>
+          )}
+
+          {filteredProducts.length > 0 ? (
+            // NEW: Added a conditional opacity to indicate loading during filtering
+            <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 transition-opacity duration-300 ${isUpdating ? 'opacity-30 pointer-events-none' : 'opacity-100'}`}>
+              {filteredProducts.map(p => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-20">
+              <h3 className="text-2xl font-bold text-gray-400">
+                {searchQuery ? `No results for "${searchQuery}"` : `No ${selectedCategory} products found.`}
+              </h3>
+              <button
+                onClick={() => { setCategory("All"); handleClearFilters(); }}
+                className={`mt-4 font-bold underline ${isLiquorMode ? 'text-purple-400' : 'text-blue-600'}`}
+              >
+                Clear all filters
+              </button>
+            </div>
+          )}
+        </div>
       </section>
     </div>
   );
