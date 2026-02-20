@@ -49,7 +49,7 @@ export default function Home() {
         setLoading(false);
         setIsUpdating(false);
       });
-  }, [selectedCategory, sortOrder, minPrice, maxPrice]);
+  }, [selectedCategory, sortOrder, minPrice, maxPrice, products.length]);
 
   useEffect(() => {
     fetchProducts();
@@ -65,15 +65,14 @@ export default function Home() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCategory]);
 
-  // Search filters the already-loaded products in memory
+  // --- MODIFIED SEARCH LOGIC: FILTER BY TITLE ONLY ---
   const filteredProducts = products.filter(product => {
     if (!searchQuery) return true;
     const q = searchQuery.toLowerCase();
-    return (
-      product.title.toLowerCase().includes(q) ||
-      product.description?.toLowerCase().includes(q)
-    );
+    // Removed product.description check to search strictly by name/title
+    return product.title.toLowerCase().includes(q);
   });
+  // ---------------------------------------------------
 
   const handleApplyPrice = () => {
     setPriceRange(localMin, localMax);
@@ -105,7 +104,7 @@ export default function Home() {
           {isLiquorMode && (
             <div className="absolute top-0 right-0 w-96 h-96 bg-purple-600/20 blur-[120px] rounded-full -mr-20 -mt-20"></div>
           )}
-          <div className="max-w-7xl mx-auto px-6 py-20 md:py-32 relative z-10">
+          <div className="max-w-7xl auto px-6 py-20 md:py-32 relative z-10">
             <div className="max-w-3xl">
               <span className={`text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-widest mb-6 inline-block transition-colors ${isLiquorMode ? 'bg-purple-600 text-white shadow-lg shadow-purple-500/20' : 'bg-yellow-400 text-blue-900'}`}>
                 {isLiquorMode ? "Premium Spirits Collection" : "Free Shipping on All Orders"}
