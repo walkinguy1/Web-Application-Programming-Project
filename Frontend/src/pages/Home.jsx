@@ -1,16 +1,18 @@
-import React, { useState, useEffect, useCallback} from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import ProductCard from '../components/ProductCard';
 import { useCartStore } from '../store/useCartStore';
-import { SlidersHorizontal, X } from 'lucide-react';
+import { SlidersHorizontal, X, Beer, Baby, PartyPopper } from 'lucide-react';
 
 export default function Home() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
-
-  // Track background updates without unmounting the whole page
   const [isUpdating, setIsUpdating] = useState(false);
+  
+  // Age Verification & POV States
+  const [isAgeVerified, setIsAgeVerified] = useState(false);
+  const [isDizzy, setIsDizzy] = useState(false);
 
   const [localMin, setLocalMin] = useState('');
   const [localMax, setLocalMax] = useState('');
@@ -24,7 +26,6 @@ export default function Home() {
 
   const isLiquorMode = selectedCategory === "Liquor";
 
-  // Fetch is only triggered by category, sort, and price — NOT search
   const fetchProducts = useCallback(() => {
     if (products.length > 0) {
       setIsUpdating(true);
@@ -49,30 +50,29 @@ export default function Home() {
         setLoading(false);
         setIsUpdating(false);
       });
-  }, [selectedCategory, sortOrder, minPrice, maxPrice]);
+  }, [selectedCategory, sortOrder, minPrice, maxPrice, products.length]);
 
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
 
-  // Clear search and filters when category changes
   useEffect(() => {
     setSearchQuery('');
     setSortOrder('');
     setPriceRange('', '');
     setLocalMin('');
     setLocalMax('');
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedCategory]);
+    
+    // Safety: If they leave Liquor category, stop the dizziness immediately
+    if (selectedCategory !== "Liquor") {
+      setIsDizzy(false);
+    }
+  }, [selectedCategory, setSearchQuery, setSortOrder, setPriceRange]);
 
-  // Search filters the already-loaded products in memory
   const filteredProducts = products.filter(product => {
     if (!searchQuery) return true;
     const q = searchQuery.toLowerCase();
-    return (
-      product.title.toLowerCase().includes(q) ||
-      product.description?.toLowerCase().includes(q)
-    );
+    return product.title.toLowerCase().includes(q);
   });
 
   const handleApplyPrice = () => {
@@ -89,7 +89,31 @@ export default function Home() {
 
   const hasActiveFilters = sortOrder || minPrice || maxPrice;
 
-  // Initial load state
+  // --- DIZZY POV HANDLERS ---
+  const handleUnder18 = () => {
+    setCategory("All"); 
+    setIsAgeVerified(false);
+    setIsDizzy(false);
+  };
+
+  const handleOver18 = () => {
+    setIsAgeVerified(true);
+    if (isLiquorMode) {
+      setIsDizzy(true);
+      // Dizzy for 4 seconds when first entering
+      setTimeout(() => setIsDizzy(false), 4000);
+    }
+  };
+
+  const handleExploreSpirits = () => {
+    if (isLiquorMode) {
+      setIsDizzy(true);
+      // Dizzy hit for 3.5 seconds on button click
+      setTimeout(() => setIsDizzy(false), 3500);
+    }
+    document.getElementById('products-section')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   if (loading && products.length === 0) return (
     <div className={`flex flex-col justify-center items-center h-[60vh] transition-colors duration-500 ${isLiquorMode ? 'bg-gray-950' : 'bg-white'}`}>
       <div className={`w-12 h-12 border-4 rounded-full animate-spin ${isLiquorMode ? 'border-purple-500 border-t-transparent' : 'border-blue-600 border-t-transparent'}`}></div>
@@ -97,9 +121,77 @@ export default function Home() {
   );
 
   return (
-    <div className={`w-full transition-colors duration-700 min-h-screen ${isLiquorMode ? 'bg-gray-950 text-white' : 'bg-white'}`}>
+    <div className={`w-full transition-all duration-700 min-h-screen relative overflow-x-hidden ${isLiquorMode ? 'bg-gray-950 text-white' : 'bg-white'} ${isDizzy ? 'animate-dizzy' : ''}`}>
+      
+      {/* DIZZY POV KEYFRAMES */}
+      <style>{`
+        @keyframes dizzy {
+          0% { transform: scale(1) rotate(0deg); filter: blur(0px); }
+          25% { transform: scale(1.02) rotate(1.2deg) translateX(8px); filter: blur(1.2px); }
+          50% { transform: scale(0.99) rotate(-0.8deg) translateY(5px); filter: blur(0.5px); }
+          75% { transform: scale(1.01) rotate(1.5deg) translateX(-8px); filter: blur(1.8px); }
+          100% { transform: scale(1) rotate(0deg); filter: blur(0px); }
+        }
+        .animate-dizzy {
+          animation: dizzy 3.5s ease-in-out infinite;
+          transform-origin: center;
+          pointer-events: none; /* Helps prevent accidental clicks while moving */
+          pointer-events: auto; 
+        }
+      `}</style>
 
-      {/* HERO — Shows on "All" and "Liquor" when no search is active */}
+      {/* FUN AGE VERIFICATION POPUP */}
+      {isLiquorMode && !isAgeVerified && (
+        <div className="fixed inset-0 z-[999] flex items-center justify-center px-6">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-[20px] transition-all"></div>
+          
+          <div className="relative bg-zinc-900 border-2 border-purple-500/30 p-10 rounded-[3.5rem] max-w-lg w-full text-center shadow-[0_0_50px_rgba(168,85,247,0.2)] animate-in zoom-in duration-300">
+            <div className="relative w-24 h-24 mx-auto mb-8">
+              <div className="absolute inset-0 bg-purple-600 blur-2xl opacity-20 animate-pulse"></div>
+              <div className="relative bg-gradient-to-tr from-purple-600 to-pink-500 w-full h-full rounded-[2.5rem] flex items-center justify-center shadow-2xl rotate-3">
+                <Beer size={44} className="text-white" />
+              </div>
+            </div>
+            
+            <h2 className="text-4xl font-black uppercase italic tracking-tighter mb-2 text-transparent bg-clip-text bg-gradient-to-r from-white to-purple-400">
+              Hold Up, Legend! ✋
+            </h2>
+            
+            <p className="text-purple-400 font-bold text-[10px] tracking-[0.3em] uppercase mb-6">
+                Jhyapp hune umer bhayo?
+            </p>
+
+            <p className="text-gray-400 mb-10 leading-relaxed font-medium px-4">
+              This section is for the veterans only. Are you <span className="text-white font-bold underline decoration-purple-500">18+</span> or should we call your mom?
+            </p>
+
+            <div className="flex flex-col gap-3">
+              <button 
+                onClick={handleOver18}
+                className="group relative overflow-hidden px-8 py-5 rounded-2xl bg-white text-black font-black text-sm uppercase tracking-widest transition-all active:scale-95 shadow-xl"
+              >
+                <span className="relative z-10 flex items-center justify-center gap-2">
+                  I'm a grown up. Let's go! <PartyPopper size={18} />
+                </span>
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-pink-400 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              </button>
+
+              <button 
+                onClick={handleUnder18}
+                className="px-8 py-5 rounded-2xl bg-zinc-800 text-zinc-500 font-bold text-xs uppercase tracking-widest hover:text-white hover:bg-zinc-700 transition-all flex items-center justify-center gap-2"
+              >
+                <Baby size={16} /> Take me back to ZappStore
+              </button>
+            </div>
+            
+            <p className="mt-10 text-[9px] text-zinc-600 uppercase tracking-[0.4em] font-black">
+              * Drink Responsibly • JhyappStore Nepal *
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* HERO SECTION */}
       {!searchQuery && (selectedCategory === "All" || selectedCategory === "Liquor") && (
         <section className={`w-full transition-all duration-700 relative overflow-hidden ${isLiquorMode ? 'bg-gradient-to-br from-gray-900 via-black to-purple-950 text-white' : 'bg-gradient-to-r from-blue-700 to-blue-500 text-white'}`}>
           {isLiquorMode && (
@@ -123,7 +215,7 @@ export default function Home() {
                   : "Shop curated electronics, jewelry, and fashion with lightning-fast delivery and secure checkout."}
               </p>
               <button
-                onClick={() => document.getElementById('products-section')?.scrollIntoView({ behavior: 'smooth' })}
+                onClick={handleExploreSpirits}
                 className={`px-10 py-4 rounded-xl font-bold hover:scale-105 transition-all shadow-xl ${isLiquorMode ? 'bg-purple-600 text-white shadow-purple-500/20 hover:bg-purple-500' : 'bg-yellow-400 text-blue-900 shadow-yellow-400/30'}`}
               >
                 {isLiquorMode ? "Explore Spirits" : "Shop Now"}
@@ -135,7 +227,6 @@ export default function Home() {
 
       {/* PRODUCTS SECTION */}
       <section id="products-section" className="max-w-7xl mx-auto px-6 py-12">
-
         {/* TOOLBAR */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div className="flex items-center gap-4">

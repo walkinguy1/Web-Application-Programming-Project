@@ -11,6 +11,8 @@ import Register from './pages/Register';
 import Profile from './pages/Profile';
 import Toast from './components/Toast';
 import AdminDashboard from './pages/AdminDashboard';
+// NEW: Added the About page import for the founders section
+import About from './pages/About';
 import { useAuthStore } from './store/useAuthStore';
 import { useCartStore } from './store/useCartStore'; // 1. Import Cart Store
 
@@ -50,6 +52,10 @@ function App() {
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<Home />} />
+            
+            {/* NEW: Added the route path for the About Us page */}
+            <Route path="/about" element={<About />} />
+
             <Route path="/product/:id" element={<ProductDetail />} />
             <Route path="/cart" element={<Cart />} />
             
