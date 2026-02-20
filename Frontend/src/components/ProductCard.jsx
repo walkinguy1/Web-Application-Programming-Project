@@ -16,16 +16,18 @@ function StarDisplay({ score, size = 12 }) {
 }
 
 export default function ProductCard({ product }) {
-  const backendURL = "http://127.0.0.1:8000";
+  // Images are now stored as full URLs — no backendURL prefix needed
+  const imageSrc = product.image || 'https://placehold.co/400x400?text=No+Image';
 
   return (
     <Link to={`/product/${product.id}`} className="group">
       <div className="bg-white rounded-3xl p-5 shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 flex flex-col h-full">
         <div className="relative h-60 w-full mb-6 overflow-hidden rounded-2xl bg-white flex items-center justify-center">
           <img
-            src={product.image.startsWith('http') ? product.image : `${backendURL}${product.image}`}
+            src={imageSrc}
             alt={product.title}
             className="h-44 w-full object-contain group-hover:scale-110 transition-transform duration-500"
+            onError={e => { e.target.src = 'https://placehold.co/400x400?text=No+Image'; }}
           />
         </div>
 
@@ -34,7 +36,6 @@ export default function ProductCard({ product }) {
             {product.title}
           </h3>
 
-          {/* Star rating — only show if the product has been rated */}
           {product.rating_rate > 0 ? (
             <div className="flex items-center gap-2 mb-3">
               <StarDisplay score={product.rating_rate} size={13} />

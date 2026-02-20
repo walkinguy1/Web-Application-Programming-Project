@@ -306,7 +306,7 @@ export default function ProductDetail() {
   const [activeImage, setActiveImage] = useState(null);
   const [quantity, setQuantity] = useState(1);
 
-  const { triggerToast, updateCount, selectedCategory } = useCartStore();
+  const { triggerToast, updateCount, selectedCategory, addToCartGuest } = useCartStore();
   const isLiquorMode = selectedCategory === "Liquor";
   const initialCategory = useRef(selectedCategory);
 
@@ -339,13 +339,21 @@ export default function ProductDetail() {
   }, [id]);
 
   const handleAddToCart = async () => {
-    try {
-      const res = await axios.post(`${backendURL}/api/cart/add/`, { product_id: product.id, quantity });
-      updateCount(res.data.cart_count);
+    const token = localStorage.getItem('token');
+    if (token) {
+      // Logged-in: add to server cart
+      try {
+        const res = await axios.post(`${backendURL}/api/cart/add/`, { product_id: product.id, quantity });
+        updateCount(res.data.cart_count);
+        triggerToast(`${product.title} added to cart!`);
+      } catch (err) {
+        console.error(err);
+        triggerToast("Failed to add to cart");
+      }
+    } else {
+      // Guest: add to localStorage cart
+      addToCartGuest(product, quantity);
       triggerToast(`${product.title} added to cart!`);
-    } catch (err) {
-      console.error(err);
-      triggerToast("Failed to add to cart");
     }
   };
 

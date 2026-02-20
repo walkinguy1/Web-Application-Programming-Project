@@ -3,50 +3,90 @@ import React, { useState, useEffect } from 'react';
 import { Trash2, ShoppingBag, ArrowRight, ArrowLeft, ShoppingCart, Plus, Minus } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useCartStore } from '../store/useCartStore';
+import { useCartStore, loadGuestCart, saveGuestCart, clearGuestCart } from '../store/useCartStore';
 
 const backendURL = "http://127.0.0.1:8000";
+const PLACEHOLDER = 'https://placehold.co/80x80?text=?';
+
+function resolveImage(src) {
+  if (!src) return PLACEHOLDER;
+  if (src.startsWith('http')) return src;
+  return `${backendURL}${src}`;
+}
 
 export default function Cart() {
   const [cartData, setCartData] = useState({ items: [], grand_total: 0 });
   const [loading, setLoading] = useState(true);
-  const [updatingId, setUpdatingId] = useState(null); // tracks which item is being updated
+  const [updatingId, setUpdatingId] = useState(null);
   const navigate = useNavigate();
 
   const { fetchCartCount, triggerToast } = useCartStore();
 
+  const isGuest = !localStorage.getItem('token');
+
   const fetchCart = async () => {
-    try {
-      const res = await axios.get(`${backendURL}/api/cart/view/`);
-      setCartData(res.data);
+    if (isGuest) {
+      // Guest: read from localStorage
+      const items = loadGuestCart();
+      const grand_total = items.reduce((acc, i) => acc + i.product_price * i.quantity, 0);
+      setCartData({ items, grand_total });
       setLoading(false);
-    } catch (err) {
-      console.error("Fetch error:", err);
-      setLoading(false);
+    } else {
+      // Logged-in: fetch from server
+      try {
+        const res = await axios.get(`${backendURL}/api/cart/view/`);
+        setCartData(res.data);
+      } catch (err) {
+        console.error("Fetch error:", err);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
   useEffect(() => { fetchCart(); }, []);
 
+  // ── REMOVE ────────────────────────────────────────────────────────────────
   const handleRemove = async (itemId) => {
-    try {
-      await axios.delete(`${backendURL}/api/cart/item/${itemId}/delete/`);
-      fetchCart();
+    if (isGuest) {
+      const items = loadGuestCart().filter(i => i.id !== itemId);
+      saveGuestCart(items);
+      await fetchCart();
       fetchCartCount();
       triggerToast("Item removed from cart");
-    } catch (err) {
-      triggerToast("Error removing item");
+    } else {
+      try {
+        await axios.delete(`${backendURL}/api/cart/item/${itemId}/delete/`);
+        await fetchCart();
+        fetchCartCount();
+        triggerToast("Item removed from cart");
+      } catch {
+        triggerToast("Error removing item");
+      }
     }
   };
 
+  // ── QUANTITY ──────────────────────────────────────────────────────────────
   const handleQuantityChange = async (itemId, newQty) => {
     if (newQty < 1) return;
     setUpdatingId(itemId);
     try {
-      await axios.patch(`${backendURL}/api/cart/item/${itemId}/update/`, { quantity: newQty });
-      await fetchCart();
-      fetchCartCount();
-    } catch (err) {
+      if (isGuest) {
+        const items = loadGuestCart();
+        const item = items.find(i => i.id === itemId);
+        if (item) {
+          item.quantity = newQty;
+          item.item_total = item.product_price * newQty;
+        }
+        saveGuestCart(items);
+        await fetchCart();
+        fetchCartCount();
+      } else {
+        await axios.patch(`${backendURL}/api/cart/item/${itemId}/update/`, { quantity: newQty });
+        await fetchCart();
+        fetchCartCount();
+      }
+    } catch {
       triggerToast("Failed to update quantity");
     } finally {
       setUpdatingId(null);
@@ -54,6 +94,11 @@ export default function Cart() {
   };
 
   const handleCheckout = () => {
+    if (isGuest) {
+      triggerToast("Please log in to checkout.");
+      navigate('/login');
+      return;
+    }
     fetchCartCount();
     navigate('/checkout');
   };
@@ -75,6 +120,15 @@ export default function Cart() {
 
       <h1 className="text-4xl font-black mb-8 tracking-tighter uppercase">Your Cart</h1>
 
+      {/* Guest notice */}
+      {isGuest && cartData.items.length > 0 && (
+        <div className="mb-6 px-5 py-4 bg-blue-50 rounded-2xl border border-blue-100 flex items-center justify-between gap-4">
+          <p className="text-sm font-bold text-blue-700">
+            You're shopping as a guest. <Link to="/login" className="underline">Log in</Link> to save your cart and checkout.
+          </p>
+        </div>
+      )}
+
       {cartData.items.length === 0 ? (
         <div className="text-center py-20 bg-white rounded-[3rem] border-2 border-dashed border-gray-100">
           <ShoppingBag size={80} className="mx-auto text-gray-100 mb-6" />
@@ -90,15 +144,21 @@ export default function Cart() {
           <div className="lg:col-span-2 space-y-4">
             {cartData.items.map(item => (
               <div key={item.id} className="flex items-center gap-4 bg-white p-5 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+
                 {/* Image */}
                 <div className="w-20 h-20 bg-gray-50 rounded-2xl p-2 flex items-center justify-center shrink-0">
-                  <img src={`${backendURL}${item.product_image}`} className="w-full h-full object-contain" alt={item.product_name} />
+                  <img
+                    src={resolveImage(item.product_image)}
+                    className="w-full h-full object-contain"
+                    alt={item.product_name}
+                    onError={e => { e.target.src = PLACEHOLDER; }}
+                  />
                 </div>
 
                 {/* Name + Price */}
                 <div className="flex-1 min-w-0">
                   <h3 className="font-bold text-gray-800 truncate">{item.product_name}</h3>
-                  <p className="text-blue-600 font-black text-sm">${item.product_price}</p>
+                  <p className="text-blue-600 font-black text-sm">${parseFloat(item.product_price).toFixed(2)}</p>
                 </div>
 
                 {/* Quantity controls */}
@@ -111,9 +171,9 @@ export default function Cart() {
                     <Minus size={14} />
                   </button>
                   <span className="w-8 text-center font-black text-gray-900 text-sm">
-                    {updatingId === item.id ? (
-                      <span className="inline-block w-3 h-3 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></span>
-                    ) : item.quantity}
+                    {updatingId === item.id
+                      ? <span className="inline-block w-3 h-3 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
+                      : item.quantity}
                   </span>
                   <button
                     onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
@@ -126,7 +186,7 @@ export default function Cart() {
 
                 {/* Total + Remove */}
                 <div className="flex flex-col items-end gap-2 shrink-0">
-                  <span className="font-black text-lg">${item.item_total.toFixed(2)}</span>
+                  <span className="font-black text-lg">${(item.product_price * item.quantity).toFixed(2)}</span>
                   <button onClick={() => handleRemove(item.id)} className="text-red-400 p-1.5 hover:bg-red-50 hover:text-red-600 rounded-xl transition-colors">
                     <Trash2 size={18} />
                   </button>
@@ -154,8 +214,11 @@ export default function Cart() {
                 </div>
               </div>
               <div className="space-y-3">
-                <button onClick={handleCheckout} className="w-full bg-blue-600 hover:bg-blue-500 text-white py-5 rounded-2xl font-black text-lg flex items-center justify-center gap-2 transition-all active:scale-95">
-                  Checkout Now <ArrowRight size={20} />
+                <button
+                  onClick={handleCheckout}
+                  className="w-full bg-blue-600 hover:bg-blue-500 text-white py-5 rounded-2xl font-black text-lg flex items-center justify-center gap-2 transition-all active:scale-95"
+                >
+                  {isGuest ? 'Log in to Checkout' : 'Checkout Now'} <ArrowRight size={20} />
                 </button>
                 <button onClick={() => navigate('/')} className="w-full bg-white/5 hover:bg-white/10 text-gray-300 py-4 rounded-2xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-2 transition-all border border-white/10">
                   <ShoppingCart size={18} /> Continue Shopping
@@ -164,6 +227,7 @@ export default function Cart() {
               <p className="text-center text-[10px] text-gray-500 mt-6 uppercase tracking-widest font-bold">Secure SSL Encrypted Checkout</p>
             </div>
           </div>
+
         </div>
       )}
     </div>
