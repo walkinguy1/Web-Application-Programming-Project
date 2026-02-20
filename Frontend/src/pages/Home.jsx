@@ -9,7 +9,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
 
-  // NEW: Added state to track background updates without unmounting the whole page
+  // Track background updates without unmounting the whole page
   const [isUpdating, setIsUpdating] = useState(false);
 
   const [localMin, setLocalMin] = useState('');
@@ -22,12 +22,10 @@ export default function Home() {
     minPrice, maxPrice, setPriceRange,
   } = useCartStore();
 
-  const categories = ["All", "Electronics", "Jewelry", "Men's Clothing", "Women's Clothing", "Liquor"];
   const isLiquorMode = selectedCategory === "Liquor";
 
   // Fetch is only triggered by category, sort, and price — NOT search
   const fetchProducts = useCallback(() => {
-    // NEW: If we already have products, show a subtle loader instead of clearing the screen
     if (products.length > 0) {
       setIsUpdating(true);
     } else {
@@ -44,16 +42,14 @@ export default function Home() {
       .then(res => {
         setProducts(res.data);
         setLoading(false);
-        // NEW: Turn off background update state
         setIsUpdating(false);
       })
       .catch(err => {
         console.log("Backend error:", err);
         setLoading(false);
-        // NEW: Reset update state on error
         setIsUpdating(false);
       });
-  }, [selectedCategory, sortOrder, minPrice, maxPrice]); // Removed products.length to prevent infinite loops
+  }, [selectedCategory, sortOrder, minPrice, maxPrice]);
 
   useEffect(() => {
     fetchProducts();
@@ -69,7 +65,7 @@ export default function Home() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCategory]);
 
-  // Search filters the already-loaded products in memory — no API call, no blink
+  // Search filters the already-loaded products in memory
   const filteredProducts = products.filter(product => {
     if (!searchQuery) return true;
     const q = searchQuery.toLowerCase();
@@ -93,7 +89,7 @@ export default function Home() {
 
   const hasActiveFilters = sortOrder || minPrice || maxPrice;
 
-  // NEW: Only trigger full-page replacement if it's the absolute initial load
+  // Initial load state
   if (loading && products.length === 0) return (
     <div className={`flex flex-col justify-center items-center h-[60vh] transition-colors duration-500 ${isLiquorMode ? 'bg-gray-950' : 'bg-white'}`}>
       <div className={`w-12 h-12 border-4 rounded-full animate-spin ${isLiquorMode ? 'border-purple-500 border-t-transparent' : 'border-blue-600 border-t-transparent'}`}></div>
@@ -103,20 +99,20 @@ export default function Home() {
   return (
     <div className={`w-full transition-colors duration-700 min-h-screen ${isLiquorMode ? 'bg-gray-950 text-white' : 'bg-white'}`}>
 
-      {/* HERO — only on All with no search */}
-      {!searchQuery && selectedCategory === "All" && (
+      {/* HERO — Shows on "All" and "Liquor" when no search is active */}
+      {!searchQuery && (selectedCategory === "All" || selectedCategory === "Liquor") && (
         <section className={`w-full transition-all duration-700 relative overflow-hidden ${isLiquorMode ? 'bg-gradient-to-br from-gray-900 via-black to-purple-950 text-white' : 'bg-gradient-to-r from-blue-700 to-blue-500 text-white'}`}>
           {isLiquorMode && (
             <div className="absolute top-0 right-0 w-96 h-96 bg-purple-600/20 blur-[120px] rounded-full -mr-20 -mt-20"></div>
           )}
           <div className="max-w-7xl mx-auto px-6 py-20 md:py-32 relative z-10">
             <div className="max-w-3xl">
-              <span className={`text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-widest mb-6 inline-block transition-colors ${isLiquorMode ? 'bg-purple-600 text-white' : 'bg-yellow-400 text-blue-900'}`}>
+              <span className={`text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-widest mb-6 inline-block transition-colors ${isLiquorMode ? 'bg-purple-600 text-white shadow-lg shadow-purple-500/20' : 'bg-yellow-400 text-blue-900'}`}>
                 {isLiquorMode ? "Premium Spirits Collection" : "Free Shipping on All Orders"}
               </span>
               <h1 className="text-5xl md:text-7xl font-black mb-6 leading-tight tracking-tighter">
                 {isLiquorMode ? (
-                  <>Experience the <span className="text-purple-400 italic">Night</span> with Jhapp</>
+                  <>Experience the <span className="text-purple-400 italic">Night</span> Being Jhyapp</>
                 ) : (
                   <>Discover Tomorrow's <span className="text-yellow-400">Style</span> Today</>
                 )}
@@ -136,25 +132,6 @@ export default function Home() {
           </div>
         </section>
       )}
-
-      {/* CATEGORY BAR */}
-      <section className="max-w-7xl mx-auto px-6 pt-10">
-        <div className="flex flex-wrap items-center gap-3">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setCategory(cat)}
-              className={`px-6 py-2 rounded-full font-bold text-sm transition-all border ${
-                selectedCategory === cat
-                  ? (isLiquorMode ? "bg-purple-600 text-white border-purple-600 shadow-lg" : "bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-200")
-                  : (isLiquorMode ? "bg-gray-900 text-gray-400 border-gray-800 hover:border-purple-500" : "bg-white text-gray-600 border-gray-200 hover:border-blue-400")
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-      </section>
 
       {/* PRODUCTS SECTION */}
       <section id="products-section" className="max-w-7xl mx-auto px-6 py-12">
@@ -243,9 +220,8 @@ export default function Home() {
           </div>
         )}
 
-        {/* PRODUCT GRID — NEW: Wrapped in a relative div to allow a subtle background loader overlay */}
+        {/* PRODUCT GRID */}
         <div className="relative min-h-[400px]">
-          {/* NEW: Background updating spinner — keeps page scroll in place */}
           {isUpdating && (
             <div className="absolute inset-0 z-20 flex justify-center pt-20 bg-inherit/30 backdrop-blur-[1px]">
                <div className={`w-10 h-10 border-4 rounded-full animate-spin ${isLiquorMode ? 'border-purple-500' : 'border-blue-600'} border-t-transparent`}></div>
@@ -253,7 +229,6 @@ export default function Home() {
           )}
 
           {filteredProducts.length > 0 ? (
-            // NEW: Added a conditional opacity to indicate loading during filtering
             <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 transition-opacity duration-300 ${isUpdating ? 'opacity-30 pointer-events-none' : 'opacity-100'}`}>
               {filteredProducts.map(p => (
                 <ProductCard key={p.id} product={p} />
@@ -270,7 +245,7 @@ export default function Home() {
               >
                 Clear all filters
               </button>
-            </div>
+            </div>  
           )}
         </div>
       </section>
