@@ -93,13 +93,13 @@ export default function Navbar() {
           isLiquorMode ? 'bg-black/90 border-purple-900/50' : 'bg-white/90 border-gray-100'
         }`}>
 
-          {/* LOGO */}
+          {/* LOGO SECTION - Updated for YouTube-style branding */}
           <Link
             to="/"
             onClick={() => { setCategory("All"); setMobileSearchOpen(false); }}
-            className="flex items-center gap-2 shrink-0"
+            className="flex items-center gap-2 shrink-0 group"
           >
-            <div className={`p-1.5 rounded-lg transition-all duration-500 shadow-lg ${
+            <div className={`p-1.5 rounded-lg transition-all duration-500 shadow-lg flex items-center justify-center ${
               isLiquorMode
                 ? 'bg-purple-600 shadow-purple-500/40 animate-pulse'
                 : 'bg-blue-600 animate-box-electric'
@@ -113,7 +113,14 @@ export default function Navbar() {
             <span className={`text-2xl font-black tracking-tighter uppercase transition-all duration-500 ${
               isLiquorMode ? 'text-purple-400 italic tracking-widest' : 'text-gray-900'
             }`}>
-              {isLiquorMode ? "JHYAPPSTORE" : "ZAPPSTORE"}
+              {isLiquorMode ? (
+                "JHYAPPSTORE"
+              ) : (
+                <>
+                  <span className="text-blue-600">ZAPP</span>
+                  <span className="text-gray-900">STORE</span>
+                </>
+              )}
             </span>
           </Link>
 
@@ -137,8 +144,6 @@ export default function Navbar() {
 
           {/* ACTIONS */}
           <div className="flex items-center gap-3 md:gap-5">
-
-            {/* Mobile search toggle button */}
             <button
               className={`md:hidden p-2 rounded-full transition-all ${
                 isLiquorMode ? 'hover:bg-purple-900/30 text-purple-400' : 'hover:bg-gray-100 text-gray-700'
@@ -148,7 +153,6 @@ export default function Navbar() {
               {mobileSearchOpen ? <X size={22} /> : <Search size={22} />}
             </button>
 
-            {/* Cart icon */}
             <Link to="/cart" className={`relative p-2 rounded-full transition-all group ${
               isLiquorMode ? 'hover:bg-purple-900/30' : 'hover:bg-gray-100'
             }`}>
@@ -178,14 +182,6 @@ export default function Navbar() {
                   >
                     {user?.username}
                   </Link>
-                  {user?.is_staff && (
-                    <Link
-                      to="/admin-dashboard"
-                      className="text-[10px] font-black uppercase tracking-widest text-blue-500 hover:underline mt-0.5"
-                    >
-                      Dashboard
-                    </Link>
-                  )}
                 </div>
 
                 <Link
@@ -227,7 +223,7 @@ export default function Navbar() {
           </div>
         </nav>
 
-        {/* MOBILE SEARCH BAR — slides down when toggled */}
+        {/* MOBILE SEARCH BAR */}
         {mobileSearchOpen && (
           <div className={`md:hidden px-4 py-3 border-b transition-colors ${
             isLiquorMode ? 'bg-black border-purple-900/30' : 'bg-white border-gray-100'
