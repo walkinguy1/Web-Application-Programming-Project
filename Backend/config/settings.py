@@ -1,10 +1,11 @@
 """
 Django settings for config project.
-Works for local dev (SQLite) and Railway production (SQLite on persistent volume).
+Works for local dev (SQLite) and Render production (PostgreSQL).
 """
 
 from pathlib import Path
 import os
+import dj_database_url
 from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -114,17 +115,22 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-# ── Database — SQLite ─────────────────────────────────────────────────────────
-# On Railway, DB_PATH is set to /data/db.sqlite3 (the persistent volume mount).
-# Locally it falls back to the project directory as normal.
-DB_PATH = config('DB_PATH', default=str(BASE_DIR / 'db.sqlite3'))
+# ── Database ──────────────────────────────────────────────────────────────────
+# On Render, DATABASE_URL is set automatically when you attach a PostgreSQL db.
+# Locally it falls back to SQLite — no changes needed for local dev.
+DATABASE_URL = config('DATABASE_URL', default=None)
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': DB_PATH,
+if DATABASE_URL:
+    DATABASES = {
+        'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600)
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # ── Password validation ───────────────────────────────────────────────────────
 AUTH_PASSWORD_VALIDATORS = [
