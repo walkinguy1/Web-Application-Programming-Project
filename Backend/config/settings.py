@@ -14,16 +14,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-7$6h-@k!1!zpt)@g%^p&lftvi584vd($&sr-(y$7a8f$7$p3hn')
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = config(
-    'ALLOWED_HOSTS',
-    default='127.0.0.1,localhost'
-).split(',')
+ALLOWED_HOSTS = [
+    h.strip() for h in config(
+        'ALLOWED_HOSTS', 
+        default='127.0.0.1,localhost'
+    ).split(',') if h.strip()
+]
 
 # ── CORS ──────────────────────────────────────────────────────────────────────
-CORS_ALLOWED_ORIGINS = config(
-    'CORS_ALLOWED_ORIGINS',
-    default='http://localhost:5173,http://127.0.0.1:5173'
-).split(',')
+CORS_ALLOWED_ORIGINS = [
+    o.strip() for o in config(
+        'CORS_ALLOWED_ORIGINS', 
+        default='http://localhost:5173,http://127.0.0.1:5173'
+    ).split(',') if o.strip()
+]
 
 CORS_ALLOW_CREDENTIALS = True
 
