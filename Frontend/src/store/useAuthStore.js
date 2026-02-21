@@ -2,9 +2,7 @@
 import { create } from 'zustand';
 import axios from 'axios';
 import { loadGuestCart, clearGuestCart } from './useCartStore';
-
-const backendURL = "http://127.0.0.1:8000";
-
+import backendURL from '../config';
 export const useAuthStore = create((set) => ({
   user: JSON.parse(localStorage.getItem('user')) || null,
   token: localStorage.getItem('token') || null,

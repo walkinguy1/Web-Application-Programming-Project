@@ -4,8 +4,8 @@ import { Trash2, ShoppingBag, ArrowRight, ArrowLeft, ShoppingCart, Plus, Minus }
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useCartStore, loadGuestCart, saveGuestCart, clearGuestCart } from '../store/useCartStore';
+import backendURL from '../config';
 
-const backendURL = "http://127.0.0.1:8000";
 const PLACEHOLDER = 'https://placehold.co/80x80?text=?';
 
 function resolveImage(src) {

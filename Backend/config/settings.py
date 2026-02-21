@@ -1,32 +1,57 @@
 """
 Django settings for config project.
+Works for local dev (SQLite) and Railway production (SQLite on persistent volume).
 """
 
 from pathlib import Path
 import os
+from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-7$6h-@k!1!zpt)@g%^p&lftvi584vd($&sr-(y$7a8f$7$p3hn'
+# ── Security ──────────────────────────────────────────────────────────────────
+SECRET_KEY = config('SECRET_KEY', default='django-insecure-7$6h-@k!1!zpt)@g%^p&lftvi584vd($&sr-(y$7a8f$7$p3hn')
+DEBUG = config('DEBUG', default=False, cast=bool)
 
-DEBUG = True
-
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = config(
+    'ALLOWED_HOSTS',
+    default='127.0.0.1,localhost'
+).split(',')
 
 # ── CORS ──────────────────────────────────────────────────────────────────────
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-]
-# Required so the browser sends the session cookie with every cross-origin
-# request — this is what makes the guest cart work.
+CORS_ALLOWED_ORIGINS = config(
+    'CORS_ALLOWED_ORIGINS',
+    default='http://localhost:5173,http://127.0.0.1:5173'
+).split(',')
+
 CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
 
 # ── Media files ───────────────────────────────────────────────────────────────
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# ── Django REST Framework ─────────────────────────────────────────────────────
+# ── Static files (WhiteNoise) ─────────────────────────────────────────────────
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# ── Session cookie ────────────────────────────────────────────────────────────
+SESSION_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SECURE = config('SESSION_COOKIE_SECURE', default=False, cast=bool)
+
+# ── REST Framework ────────────────────────────────────────────────────────────
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -37,13 +62,6 @@ REST_FRAMEWORK = {
         'rest_framework.filters.SearchFilter',
     ),
 }
-
-# ── Session cookie ────────────────────────────────────────────────────────────
-# 'Lax' (Django default) blocks cookies on cross-origin requests.
-# 'None' allows the browser to send the session cookie from localhost:5173
-# to 127.0.0.1:8000 so Django can find the guest cart across requests.
-SESSION_COOKIE_SAMESITE = 'None'
-SESSION_COOKIE_SECURE = False   # must be False for local HTTP dev
 
 # ── Installed apps ────────────────────────────────────────────────────────────
 INSTALLED_APPS = [
@@ -67,6 +85,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -95,13 +114,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
+# ── Database — SQLite ─────────────────────────────────────────────────────────
+# On Railway, DB_PATH is set to /data/db.sqlite3 (the persistent volume mount).
+# Locally it falls back to the project directory as normal.
+DB_PATH = config('DB_PATH', default=str(BASE_DIR / 'db.sqlite3'))
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': DB_PATH,
     }
 }
 
+# ── Password validation ───────────────────────────────────────────────────────
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -114,5 +139,4 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

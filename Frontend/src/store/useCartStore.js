@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import axios from 'axios';
+import backendURL from '../config';
 
-const backendURL = "http://127.0.0.1:8000";
 const GUEST_CART_KEY = 'guest_cart';
 
 // ── Guest cart helpers ────────────────────────────────────────────────────────

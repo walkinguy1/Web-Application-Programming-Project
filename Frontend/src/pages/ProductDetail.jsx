@@ -4,8 +4,7 @@ import axios from 'axios';
 import { useCartStore } from '../store/useCartStore';
 import { useAuthStore } from '../store/useAuthStore';
 import { Loader2, Plus, Minus, ShoppingBag, Star } from 'lucide-react';
-
-const backendURL = "http://127.0.0.1:8000";
+import backendURL from '../config';
 
 // ── Star display (read-only) ─────────────────────────────────────────────────
 function StarDisplay({ score, size = 18, className = '' }) {

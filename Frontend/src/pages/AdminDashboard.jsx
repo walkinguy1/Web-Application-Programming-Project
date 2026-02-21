@@ -8,8 +8,8 @@ import {
   LayoutDashboard, ShoppingBag, CreditCard, Search,
   Pencil, Trash2, Plus, X, Save, ImageOff
 } from 'lucide-react';
+import backendURL from '../config';
 
-const backendURL = 'http://127.0.0.1:8000';
 
 const CATEGORIES = ['Electronics', 'Jewelry', "Men's Clothing", "Women's Clothing", 'Liquor', 'Sale'];
 

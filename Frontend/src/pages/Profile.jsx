@@ -5,8 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/useAuthStore';
 import { useCartStore } from '../store/useCartStore';
 import { User, Mail, Calendar, Package, CheckCircle, Clock, XCircle, Edit3, Save, X } from 'lucide-react';
-
-const backendURL = 'http://127.0.0.1:8000';
+import backendURL from '../config';
 
 const ORDER_STEPS = ['pending', 'processing', 'shipped', 'delivered'];
 
