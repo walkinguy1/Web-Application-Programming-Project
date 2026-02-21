@@ -46,7 +46,14 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # ── Static files (WhiteNoise) ─────────────────────────────────────────────────
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 # ── Session cookie ────────────────────────────────────────────────────────────
 SESSION_COOKIE_SAMESITE = 'None'
