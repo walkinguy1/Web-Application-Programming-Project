@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useCartStore } from '../store/useCartStore';
-import { Instagram, Facebook, Twitter, MapPin, Phone, Mail, Zap, Wine } from 'lucide-react';
+import { Instagram, Facebook, Twitter, MapPin, Phone, Mail, Zap, Wine, Heart } from 'lucide-react';
 
 export default function Footer() {
   const { selectedCategory, setCategory } = useCartStore();
@@ -86,11 +86,19 @@ export default function Footer() {
       <div className={`max-w-7xl mx-auto px-6 mt-16 pt-8 border-t flex flex-col md:flex-row justify-between items-center gap-4 text-slate-500 text-xs ${
         isLiquorMode ? 'border-purple-900/20' : 'border-slate-800'
       }`}>
-        <p>© 2026 {isLiquorMode ? "JhyappStore" : "ZappStore"} Inc. All rights reserved.</p>
+        <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4">
+          <p>© 2026 {isLiquorMode ? "JhyappStore" : "ZappStore"} Inc. All rights reserved.</p>
+          <span className="hidden md:block text-slate-700">|</span>
+          <p className="flex items-center gap-1 font-medium">
+            Created with <Heart size={10} className={isLiquorMode ? 'text-purple-500 fill-purple-500' : 'text-blue-400 fill-blue-400'} /> by 
+            <span className={`font-bold ml-1 ${isLiquorMode ? 'text-purple-400' : 'text-blue-400'}`}>Team Marco Polo</span>
+          </p>
+        </div>
+        
         <div className="flex gap-6">
-          <span className="hover:text-slate-300 cursor-pointer">Privacy Policy</span>
-          <span className="hover:text-slate-300 cursor-pointer">Terms of Service</span>
-          <span className="hover:text-slate-300 cursor-pointer">Cookies</span>
+          <span className="hover:text-slate-300 cursor-pointer transition-colors">Privacy Policy</span>
+          <span className="hover:text-slate-300 cursor-pointer transition-colors">Terms of Service</span>
+          <span className="hover:text-slate-300 cursor-pointer transition-colors">Cookies</span>
         </div>
       </div>
     </footer>

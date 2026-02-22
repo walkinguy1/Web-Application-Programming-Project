@@ -7,6 +7,7 @@ from pathlib import Path
 import os
 import dj_database_url
 from decouple import config
+from datetime import timedelta # Added import here
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -75,6 +76,19 @@ REST_FRAMEWORK = {
     ),
 }
 
+# ── Simple JWT Configuration ─────────────────────────────────────────────────
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=10),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': False,
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+}
+
 # ── Installed apps ────────────────────────────────────────────────────────────
 INSTALLED_APPS = [
     'accounts',
@@ -110,7 +124,7 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
-    {
+    {   
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [],
         'APP_DIRS': True,
@@ -127,8 +141,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 # ── Database ──────────────────────────────────────────────────────────────────
-# On Render, DATABASE_URL is set automatically when you attach a PostgreSQL db.
-# Locally it falls back to SQLite — no changes needed for local dev.
 DATABASE_URL = config('DATABASE_URL', default=None)
 
 if DATABASE_URL:

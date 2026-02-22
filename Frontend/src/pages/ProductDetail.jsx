@@ -91,7 +91,6 @@ function RatingSection({ productId, isLiquorMode }) {
       setLoadingRatings(false);
     };
     load();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productId]);
 
   const handleSubmit = async () => {
@@ -140,9 +139,7 @@ function RatingSection({ productId, isLiquorMode }) {
     : 'bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400 focus:border-blue-400';
 
   return (
-    <div className="mt-16 space-y-8">
-
-      {/* Header + average */}
+    <div className="mt-16 space-y-8 max-w-7xl mx-auto">
       <div className="flex items-center gap-6">
         <h2 className={`text-3xl font-black tracking-tighter uppercase ${isLiquorMode ? 'text-purple-400' : 'text-gray-900'}`}>
           Reviews
@@ -161,7 +158,6 @@ function RatingSection({ productId, isLiquorMode }) {
         )}
       </div>
 
-      {/* Rating form */}
       {token ? (
         hasPurchased ? (
           <div className={`rounded-[2rem] border p-6 ${card}`}>
@@ -182,16 +178,10 @@ function RatingSection({ productId, isLiquorMode }) {
                   </p>
                 )}
                 <div className="flex gap-3">
-                  <button
-                    onClick={() => setIsEditing(true)}
-                    className={`px-5 py-2 rounded-xl text-sm font-black transition-all ${isLiquorMode ? 'bg-purple-600 text-white hover:bg-purple-500' : 'bg-blue-600 text-white hover:bg-black'}`}
-                  >
+                  <button onClick={() => setIsEditing(true)} className={`px-5 py-2 rounded-xl text-sm font-black transition-all ${isLiquorMode ? 'bg-purple-600 text-white hover:bg-purple-500' : 'bg-blue-600 text-white hover:bg-black'}`}>
                     Edit Rating
                   </button>
-                  <button
-                    onClick={handleDelete}
-                    className="px-5 py-2 rounded-xl text-sm font-black bg-red-50 text-red-500 hover:bg-red-100 transition-all"
-                  >
+                  <button onClick={handleDelete} className="px-5 py-2 rounded-xl text-sm font-black bg-red-50 text-red-500 hover:bg-red-100 transition-all">
                     Remove
                   </button>
                 </div>
@@ -222,18 +212,11 @@ function RatingSection({ productId, isLiquorMode }) {
                   </p>
                 )}
                 <div className="flex gap-3 mt-4">
-                  <button
-                    onClick={handleSubmit}
-                    disabled={submitting}
-                    className={`px-8 py-3 rounded-xl font-black text-sm transition-all disabled:opacity-50 ${isLiquorMode ? 'bg-purple-600 text-white hover:bg-purple-500' : 'bg-blue-600 text-white hover:bg-black'}`}
-                  >
+                  <button onClick={handleSubmit} disabled={submitting} className={`px-8 py-3 rounded-xl font-black text-sm transition-all disabled:opacity-50 ${isLiquorMode ? 'bg-purple-600 text-white hover:bg-purple-500' : 'bg-blue-600 text-white hover:bg-black'}`}>
                     {submitting ? 'Submitting...' : myRating ? 'Update Rating' : 'Submit Rating'}
                   </button>
                   {myRating && (
-                    <button
-                      onClick={() => { setIsEditing(false); setSelectedScore(myRating.score); setReviewText(myRating.review); }}
-                      className={`px-5 py-3 rounded-xl text-sm font-black transition-all ${isLiquorMode ? 'bg-gray-800 text-gray-400 hover:bg-gray-700' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
-                    >
+                    <button onClick={() => { setIsEditing(false); setSelectedScore(myRating.score); setReviewText(myRating.review); }} className={`px-5 py-3 rounded-xl text-sm font-black transition-all ${isLiquorMode ? 'bg-gray-800 text-gray-400 hover:bg-gray-700' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}>
                       Cancel
                     </button>
                   )}
@@ -256,13 +239,12 @@ function RatingSection({ productId, isLiquorMode }) {
         </div>
       )}
 
-      {/* All reviews */}
       {loadingRatings ? null : ratingsData.ratings.length === 0 ? (
         <p className={`text-sm font-bold text-center py-8 ${isLiquorMode ? 'text-gray-600' : 'text-gray-300'}`}>
           No reviews yet. Be the first!
         </p>
       ) : (
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {ratingsData.ratings.map(r => (
             <div key={r.id} className={`rounded-[2rem] border p-5 ${card}`}>
               <div className="flex items-start justify-between gap-4 mb-2">
@@ -340,17 +322,14 @@ export default function ProductDetail() {
   const handleAddToCart = async () => {
     const token = localStorage.getItem('token');
     if (token) {
-      // Logged-in: add to server cart
       try {
         const res = await axios.post(`${backendURL}/api/cart/add/`, { product_id: product.id, quantity });
         updateCount(res.data.cart_count);
         triggerToast(`${product.title} added to cart!`);
       } catch (err) {
-        console.error(err);
         triggerToast("Failed to add to cart");
       }
     } else {
-      // Guest: add to localStorage cart
       addToCartGuest(product, quantity);
       triggerToast(`${product.title} added to cart!`);
     }
@@ -373,20 +352,27 @@ export default function ProductDetail() {
 
   return (
     <div className={`min-h-screen transition-colors duration-700 ${isLiquorMode ? 'bg-gray-950 text-white' : 'bg-white'}`}>
-      <div className="container mx-auto p-6 md:p-10">
+      {/* Reduced padding to prevent "cut-off" look on small screens */}
+      <div className="max-w-7xl mx-auto p-4 md:p-10">
 
-        {/* MAIN PRODUCT CARD */}
-        <div className={`flex flex-col md:flex-row gap-12 p-4 md:p-8 rounded-[3rem] border transition-all duration-500 ${isLiquorMode ? 'bg-gray-900/40 border-purple-900/30 shadow-[0_0_50px_rgba(147,51,234,0.05)]' : 'bg-white border-gray-100'}`}>
+        {/* MAIN PRODUCT CARD - Fixed Flexbox for centering */}
+        <div className={`flex flex-col lg:flex-row items-center lg:items-start gap-12 p-6 md:p-12 rounded-[3rem] border transition-all duration-500 ${isLiquorMode ? 'bg-gray-900/40 border-purple-900/30 shadow-[0_0_50px_rgba(147,51,234,0.05)]' : 'bg-white border-gray-100'}`}>
 
-          {/* Images */}
-          <div className="w-full md:w-1/2 space-y-4">
-            <div className={`aspect-square rounded-[2.5rem] p-12 flex items-center justify-center border shadow-inner overflow-hidden transition-all duration-500 ${isLiquorMode ? 'bg-black border-purple-900/20 shadow-purple-900/10' : 'bg-gray-50 border-gray-50 shadow-inner'}`}>
-              <img src={getFullUrl(activeImage)} alt={product.title} className="max-h-full w-full object-contain hover:scale-110 transition-transform duration-700" />
+          {/* Left Column: Images */}
+          <div className="w-full lg:w-1/2 space-y-6">
+            <div className={`aspect-square rounded-[2.5rem] p-8 md:p-12 flex items-center justify-center border transition-all duration-500 ${isLiquorMode ? 'bg-black border-purple-900/20 shadow-inner shadow-purple-900/10' : 'bg-gray-50 border-gray-50 shadow-inner'}`}>
+              <img 
+                src={getFullUrl(activeImage)} 
+                alt={product.title} 
+                className="max-h-full w-auto object-contain hover:scale-105 transition-transform duration-700" 
+              />
             </div>
-            <div className="flex gap-4 overflow-x-auto pb-2 px-2 no-scrollbar">
+            
+            {/* Thumbnails */}
+            <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar justify-center lg:justify-start">
               <button
                 onClick={() => setActiveImage(product.image)}
-                className={`flex-shrink-0 w-24 h-24 border-2 rounded-2xl p-2 transition-all ${activeImage === product.image ? (isLiquorMode ? 'border-purple-500 scale-105 shadow-purple-500/20' : 'border-blue-600 scale-105 shadow-lg') : (isLiquorMode ? 'bg-gray-900 border-transparent' : 'bg-gray-50 border-transparent')}`}
+                className={`flex-shrink-0 w-20 h-20 border-2 rounded-2xl p-2 transition-all ${activeImage === product.image ? (isLiquorMode ? 'border-purple-500 scale-105' : 'border-blue-600 scale-105') : (isLiquorMode ? 'bg-gray-900 border-transparent' : 'bg-gray-50 border-transparent')}`}
               >
                 <img src={getFullUrl(product.image)} className="w-full h-full object-contain" alt="thumbnail" />
               </button>
@@ -394,7 +380,7 @@ export default function ProductDetail() {
                 <button
                   key={img.id}
                   onClick={() => setActiveImage(img.image)}
-                  className={`flex-shrink-0 w-24 h-24 border-2 rounded-2xl p-2 transition-all ${activeImage === img.image ? (isLiquorMode ? 'border-purple-500 scale-105 shadow-purple-500/20' : 'border-blue-600 scale-105 shadow-lg') : (isLiquorMode ? 'bg-gray-900 border-transparent' : 'bg-gray-50 border-transparent')}`}
+                  className={`flex-shrink-0 w-20 h-20 border-2 rounded-2xl p-2 transition-all ${activeImage === img.image ? (isLiquorMode ? 'border-purple-500 scale-105' : 'border-blue-600 scale-105') : (isLiquorMode ? 'bg-gray-900 border-transparent' : 'bg-gray-50 border-transparent')}`}
                 >
                   <img src={getFullUrl(img.image)} className="w-full h-full object-contain" alt="thumbnail" />
                 </button>
@@ -402,24 +388,23 @@ export default function ProductDetail() {
             </div>
           </div>
 
-          {/* Info */}
-          <div className="w-full md:w-1/2 flex flex-col justify-center py-4">
-            <div className="mb-4">
+          {/* Right Column: Info */}
+          <div className="w-full lg:w-1/2 flex flex-col justify-start">
+            <div className="mb-6">
               <span className={`px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-[0.2em] ${isLiquorMode ? 'bg-purple-900/30 text-purple-400' : 'bg-blue-50 text-blue-600'}`}>
                 {product.category || "Premium Collection"}
               </span>
             </div>
 
-            <h1 className={`text-5xl md:text-6xl font-black mb-4 tracking-tighter leading-tight ${isLiquorMode ? 'text-white' : 'text-gray-900'}`}>
+            <h1 className={`text-4xl md:text-6xl font-black mb-4 tracking-tighter leading-tight ${isLiquorMode ? 'text-white' : 'text-gray-900'}`}>
               {product.title}
             </h1>
 
-            {/* Inline rating summary */}
             {product.rating_rate > 0 && (
-              <div className="flex items-center gap-2 mb-4">
-                <StarDisplay score={product.rating_rate} size={16} />
+              <div className="flex items-center gap-2 mb-6">
+                <StarDisplay score={product.rating_rate} size={18} />
                 <span className={`text-sm font-black ${isLiquorMode ? 'text-purple-400' : 'text-blue-600'}`}>
-                  {parseFloat(product.rating_rate).toFixed(1)}
+                  {parseFloat(product.rating_rate).toFixed(1)} / 5.0
                 </span>
               </div>
             )}
@@ -434,47 +419,47 @@ export default function ProductDetail() {
               </p>
             </div>
 
+            {/* Actions */}
             <div className="flex flex-col sm:flex-row gap-4">
               <div className={`flex items-center rounded-2xl p-1 border transition-all ${isLiquorMode ? 'bg-gray-900 border-purple-900/30' : 'bg-gray-50 border-gray-100'}`}>
                 <button onClick={() => setQuantity(q => Math.max(1, q - 1))} className={`p-4 rounded-xl transition-all font-bold ${isLiquorMode ? 'hover:bg-purple-900/50 hover:text-purple-400 text-gray-500' : 'hover:bg-white hover:text-blue-600 text-gray-700'}`}>
                   <Minus size={20} />
                 </button>
-                <span className={`px-8 font-black text-2xl w-16 text-center ${isLiquorMode ? 'text-white' : 'text-gray-900'}`}>{quantity}</span>
+                <span className={`px-6 font-black text-2xl w-16 text-center ${isLiquorMode ? 'text-white' : 'text-gray-900'}`}>{quantity}</span>
                 <button onClick={() => setQuantity(q => q + 1)} className={`p-4 rounded-xl transition-all font-bold ${isLiquorMode ? 'hover:bg-purple-900/50 hover:text-purple-400 text-gray-500' : 'hover:bg-white hover:text-blue-600 text-gray-700'}`}>
                   <Plus size={20} />
                 </button>
               </div>
-              <button onClick={handleAddToCart} className={`flex-1 font-black text-xl rounded-2xl transition-all active:scale-95 flex items-center justify-center gap-3 py-5 sm:py-0 shadow-2xl ${isLiquorMode ? 'bg-purple-600 text-white shadow-purple-900/40 hover:bg-purple-500' : 'bg-blue-600 text-white shadow-blue-100 hover:bg-black'}`}>
+              <button onClick={handleAddToCart} className={`flex-1 font-black text-xl rounded-2xl transition-all active:scale-95 flex items-center justify-center gap-3 py-5 shadow-2xl ${isLiquorMode ? 'bg-purple-600 text-white shadow-purple-900/40 hover:bg-purple-500' : 'bg-blue-600 text-white shadow-blue-100 hover:bg-black'}`}>
                 <ShoppingBag size={24} /> ADD TO CART
               </button>
             </div>
           </div>
         </div>
 
-        {/* REVIEWS */}
+        {/* REVIEWS SECTION */}
         <RatingSection productId={id} isLiquorMode={isLiquorMode} />
 
         {/* RELATED PRODUCTS */}
         {related.length > 0 && (
-          <div className="mt-16">
-            <div className="flex items-center gap-6 mb-8">
+          <div className="mt-20">
+            <div className="flex items-center gap-6 mb-10">
               <h2 className={`text-3xl font-black tracking-tighter uppercase ${isLiquorMode ? 'text-purple-400' : 'text-gray-900'}`}>
                 More in {product.category}
               </h2>
               <div className={`h-px flex-1 ${isLiquorMode ? 'bg-gray-800' : 'bg-gray-100'}`}></div>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
               {related.map(p => (
                 <Link key={p.id} to={`/product/${p.id}`} className="group">
-                  <div className={`rounded-[2rem] p-4 border transition-all duration-300 hover:shadow-xl ${isLiquorMode ? 'bg-gray-900/40 border-purple-900/20 hover:border-purple-500/40' : 'bg-white border-gray-100 hover:border-blue-200'}`}>
+                  <div className={`h-full rounded-[2rem] p-5 border transition-all duration-300 hover:shadow-xl ${isLiquorMode ? 'bg-gray-900/40 border-purple-900/20 hover:border-purple-500/40' : 'bg-white border-gray-100 hover:border-blue-200'}`}>
                     <div className={`aspect-square rounded-2xl mb-4 flex items-center justify-center p-4 ${isLiquorMode ? 'bg-black' : 'bg-gray-50'}`}>
-                      <img src={p.image?.startsWith('http') ? p.image : `${backendURL}${p.image}`} alt={p.title} className="h-full w-full object-contain group-hover:scale-110 transition-transform duration-500" />
+                      <img src={getFullUrl(p.image)} alt={p.title} className="h-full w-full object-contain group-hover:scale-110 transition-transform duration-500" />
                     </div>
-                    <h3 className={`font-bold text-sm line-clamp-2 mb-1 group-hover:text-blue-600 transition-colors ${isLiquorMode ? 'text-gray-200' : 'text-gray-800'}`}>
+                    <h3 className={`font-bold text-sm line-clamp-2 mb-2 transition-colors ${isLiquorMode ? 'text-gray-200 group-hover:text-purple-400' : 'text-gray-800 group-hover:text-blue-600'}`}>
                       {p.title}
                     </h3>
-                    {p.rating_rate > 0 && <StarDisplay score={p.rating_rate} size={12} className="mb-1" />}
-                    <p className={`font-black ${isLiquorMode ? 'text-purple-400' : 'text-blue-600'}`}>
+                    <p className={`font-black text-lg ${isLiquorMode ? 'text-purple-400' : 'text-blue-600'}`}>
                       ${parseFloat(p.price).toFixed(2)}
                     </p>
                   </div>
