@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import backendURL from '../config';
 import { useCartStore } from '../store/useCartStore';
 import { useAuthStore } from '../store/useAuthStore'; // Added to track login state
 import { ArrowLeft, CheckCircle, CreditCard, Download, Hash, Loader2, ShoppingBag } from 'lucide-react';
@@ -41,7 +42,7 @@ export default function Checkout() {
       return;
     }
     try {
-      await axios.post('http://127.0.0.1:8000/api/payments/submit/', {
+      await axios.post(`${backendURL}/api/payments/submit/`, {
         transaction_id: transactionId,
         total_amount: totalAmount,
         items: cartItems.map(item => ({

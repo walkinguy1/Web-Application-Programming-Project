@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
+import backendURL from '../config';
 import ProductCard from '../components/ProductCard';
 import { useCartStore } from '../store/useCartStore';
 import { SlidersHorizontal, X, Beer, Baby, PartyPopper } from 'lucide-react';
@@ -39,7 +40,7 @@ export default function Home() {
     if (minPrice) params.append('min_price', minPrice);
     if (maxPrice) params.append('max_price', maxPrice);
 
-    axios.get(`http://127.0.0.1:8000/api/products/?${params.toString()}`)
+    axios.get(`${backendURL}/api/products/?${params.toString()}`)
       .then(res => {
         setProducts(res.data);
         setLoading(false);
@@ -56,16 +57,21 @@ export default function Home() {
     fetchProducts();
   }, [fetchProducts]);
 
+  // Reset filters when category changes.
+  // We use a ref-based approach to avoid calling setState synchronously
+  // in an effect body (which triggers a React warning).
+  const prevCategory = React.useRef(selectedCategory);
   useEffect(() => {
-    setSearchQuery('');
-    setSortOrder('');
-    setPriceRange('', '');
-    setLocalMin('');
-    setLocalMax('');
-    
-    // Safety: If they leave Liquor category, stop the dizziness immediately
-    if (selectedCategory !== "Liquor") {
-      setIsDizzy(false);
+    if (prevCategory.current !== selectedCategory) {
+      prevCategory.current = selectedCategory;
+      setSearchQuery('');
+      setSortOrder('');
+      setPriceRange('', '');
+      setLocalMin('');
+      setLocalMax('');
+      if (selectedCategory !== "Liquor") {
+        setIsDizzy(false);
+      }
     }
   }, [selectedCategory, setSearchQuery, setSortOrder, setPriceRange]);
 

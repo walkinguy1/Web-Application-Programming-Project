@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import backendURL from '../config';
 import { useNavigate } from 'react-router-dom';
 
 export default function Register() {
@@ -9,7 +10,7 @@ export default function Register() {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://127.0.0.1:8000/api/auth/register/', formData);
+      await axios.post(`${backendURL}/api/auth/register/`, formData);
       alert("Account created! Now please login.");
       navigate('/login');
     // eslint-disable-next-line no-unused-vars
