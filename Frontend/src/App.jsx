@@ -11,10 +11,11 @@ import Register from './pages/Register';
 import Profile from './pages/Profile';
 import Toast from './components/Toast';
 import AdminDashboard from './pages/AdminDashboard';
-// NEW: Added the About page import for the founders section
 import About from './pages/About';
+// NEW: Import the ContactUs page
+import ContactUs from './pages/Contactus'; 
 import { useAuthStore } from './store/useAuthStore';
-import { useCartStore } from './store/useCartStore'; // 1. Import Cart Store
+import { useCartStore } from './store/useCartStore';
 
 // HELPER: Auto-scroll to top on every route change
 function ScrollToTop() {
@@ -28,7 +29,7 @@ function ScrollToTop() {
 function App() {
   const { token } = useAuthStore();
   
-  // 2. Pull the selectedCategory to determine the theme
+  // Pull the selectedCategory to determine the theme
   const { selectedCategory } = useCartStore();
   const isLiquorMode = selectedCategory === "Liquor";
 
@@ -36,7 +37,7 @@ function App() {
     <Router>
       <ScrollToTop />
       
-      {/* 3. Changed bg-white to dynamic classes with transition */}
+      {/* Dynamic Theme Container */}
       <div className={`min-h-screen w-full flex flex-col font-sans antialiased transition-colors duration-700 ease-in-out ${
         isLiquorMode 
           ? 'bg-gray-950 text-white' // Night Theme
@@ -52,9 +53,10 @@ function App() {
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<Home />} />
-            
-            {/* NEW: Added the route path for the About Us page */}
             <Route path="/about" element={<About />} />
+            
+            {/* NEW: Added the route for Contact Us */}
+            <Route path="/contact" element={<ContactUs />} />
 
             <Route path="/product/:id" element={<ProductDetail />} />
             <Route path="/cart" element={<Cart />} />
@@ -66,7 +68,7 @@ function App() {
             />
             <Route path="/register" element={!token ? <Register /> : <Navigate to="/" />} />
 
-            {/* Protected Route */}
+            {/* Protected Routes */}
             <Route 
               path="/checkout" 
               element={token ? <Checkout /> : <Navigate to="/login" replace />} 
