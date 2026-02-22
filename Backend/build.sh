@@ -22,16 +22,5 @@ else:
     print('Superuser already exists, skipping.')
 "
 
-# 5. Load products only if table is empty (safe to run on every redeploy)
-python manage.py shell -c "
-from products.models import Product
-if Product.objects.count() == 0:
-    import subprocess
-    result = subprocess.run(['python', 'manage.py', 'loaddata', 'products_data.json'], capture_output=True, text=True)
-    print(result.stdout or 'Loaded.')
-    if result.stderr:
-        print('STDERR:', result.stderr)
-else:
-    count = Product.objects.count()
-    print(f'{count} products already in DB, skipping loaddata.')
-"
+# 5. Import products (skipped automatically if products already exist)
+python manage.py import_products
