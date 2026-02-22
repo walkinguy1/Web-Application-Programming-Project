@@ -91,7 +91,7 @@ export default function Footer() {
           <span className="hidden md:block text-slate-700">|</span>
           <p className="flex items-center gap-1 font-medium">
             Created with <Heart size={10} className={isLiquorMode ? 'text-purple-500 fill-purple-500' : 'text-blue-400 fill-blue-400'} /> by 
-            <span className={`font-bold ml-1 ${isLiquorMode ? 'text-purple-400' : 'text-blue-400'}`}>Team Marco Polo</span>
+            <span className={`font-bold ml-1 ${isLiquorMode ? 'text-purple-400' : 'text-blue-400'}`}>The Culprits</span>
           </p>
         </div>
         
