@@ -27,7 +27,7 @@ python manage.py shell -c "
 from products.models import Product
 if Product.objects.count() == 0:
     import subprocess
-    result = subprocess.run(['python', 'manage.py', 'loaddata', 'products_data_clean.json'], capture_output=True, text=True)
+    result = subprocess.run(['python', 'manage.py', 'loaddata', 'products_data.json'], capture_output=True, text=True)
     print(result.stdout or 'Loaded.')
     if result.stderr:
         print('STDERR:', result.stderr)
