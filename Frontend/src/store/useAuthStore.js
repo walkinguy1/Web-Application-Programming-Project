@@ -76,6 +76,7 @@ export const useAuthStore = create((set) => ({
   logout: () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    localStorage.removeItem('wishlist_updated');
     set({ token: null, user: null });
     window.location.href = '/';
   },

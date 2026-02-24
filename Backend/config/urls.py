@@ -12,6 +12,7 @@ urlpatterns = [
     path('api/profile/', include('accounts.profile_urls')),
     path('api/orders/', include('orders.urls')),
     path('api/ratings/', include('ratings.urls')),
+    path('api/wishlist/', include('wishlist.urls')),
 ]
 
 if settings.DEBUG:

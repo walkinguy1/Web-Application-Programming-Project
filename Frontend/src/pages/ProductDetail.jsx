@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { useCartStore } from '../store/useCartStore';
 import { useAuthStore } from '../store/useAuthStore';
-import { Loader2, Plus, Minus, ShoppingBag, Star } from 'lucide-react';
+import { Loader2, Plus, Minus, ShoppingBag, Star, Heart } from 'lucide-react';
 import backendURL from '../config';
 
 // ── Star display (read-only) ─────────────────────────────────────────────────
@@ -286,8 +286,11 @@ export default function ProductDetail() {
   const [loading, setLoading] = useState(true);
   const [activeImage, setActiveImage] = useState(null);
   const [quantity, setQuantity] = useState(1);
+  const [isInWishlist, setIsInWishlist] = useState(false);
+  const [loadingWishlist, setLoadingWishlist] = useState(false);
 
   const { triggerToast, updateCount, selectedCategory, addToCartGuest } = useCartStore();
+  const { token } = useAuthStore();
   const isLiquorMode = selectedCategory === "Liquor";
   const initialCategory = useRef(selectedCategory);
 
@@ -304,20 +307,73 @@ export default function ProductDetail() {
         const res = await axios.get(`${backendURL}/api/products/${id}/`);
         setProduct(res.data);
         setActiveImage(res.data.image);
+        if (token) {
+          // Always check the server first - don't trust stale localStorage data across sessions
+          await checkWishlist(res.data.id);
+        }
         try {
           const relatedRes = await axios.get(`${backendURL}/api/products/?category=${res.data.category}`);
-          setRelated(relatedRes.data.filter(p => p.id !== res.data.id).slice(0, 4));
+          setRelated(relatedRes.data.results?.filter(p => p.id !== id) || []);
         } catch {
           setRelated([]);
         }
       } catch (err) {
         console.error(err);
+        setProduct(null);
       } finally {
         setLoading(false);
       }
     };
     load();
-  }, [id]);
+  }, [id, token]);
+
+  // Listen for wishlist events dispatched from product cards and other places
+  useEffect(() => {
+    const handler = (e) => {
+      if (!product) return;
+      const pid = e?.detail?.product_id;
+      if (pid && pid !== product.id) return;
+      checkWishlist(product.id);
+    };
+    window.addEventListener('wishlist_updated', handler);
+    return () => window.removeEventListener('wishlist_updated', handler);
+  }, [product, token]);
+
+  // Poll localStorage briefly to catch wishlist updates that occur
+  // while navigation/loading is in progress (covers missed events).
+  useEffect(() => {
+    if (!product) return;
+    let seenTs = null;
+    try {
+      const last = JSON.parse(localStorage.getItem('wishlist_updated') || 'null');
+      if (last) seenTs = last.ts;
+    } catch {
+      /* ignore */
+    }
+
+    const interval = setInterval(() => {
+      try {
+        const last = JSON.parse(localStorage.getItem('wishlist_updated') || 'null');
+        if (!last) return;
+        if (last.ts === seenTs) return;
+        seenTs = last.ts;
+        if (last.product_id === product.id && Date.now() - last.ts < 6000) {
+          setIsInWishlist(!!last.in_wishlist);
+          // verify with server
+          checkWishlist(product.id);
+          clearInterval(interval);
+        }
+      } catch {
+        // ignore parse errors
+      }
+    }, 300);
+
+    const timeout = setTimeout(() => clearInterval(interval), 7000);
+    return () => {
+      clearInterval(interval);
+      clearTimeout(timeout);
+    };
+  }, [product]);
 
   const handleAddToCart = async () => {
     const token = localStorage.getItem('token');
@@ -332,6 +388,61 @@ export default function ProductDetail() {
     } else {
       addToCartGuest(product, quantity);
       triggerToast(`${product.title} added to cart!`);
+    }
+  };
+
+  const checkWishlist = async (productId) => {
+    if (!token || !productId) return;
+    try {
+      const res = await axios.post(
+        `${backendURL}/api/wishlist/check_product/`,
+        { product_id: productId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setIsInWishlist(res.data.in_wishlist);
+    } catch {
+      setIsInWishlist(false);
+    }
+  };
+
+  const toggleWishlist = async (e) => {
+    e.stopPropagation();
+    if (!token) {
+      triggerToast("Please log in first");
+      return;
+    }
+    setLoadingWishlist(true);
+    try {
+      if (isInWishlist) {
+        await axios.post(
+          `${backendURL}/api/wishlist/remove_product/`,
+          { product_id: product.id },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        triggerToast("Removed from wishlist");
+      } else {
+        await axios.post(
+          `${backendURL}/api/wishlist/add_product/`,
+          { product_id: product.id },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        triggerToast("Added to wishlist!");
+      }
+      const newState = !isInWishlist;
+      setIsInWishlist(newState);
+      
+      // Broadcast the update so ProductCard and other components pick it up
+      try {
+        const now = Date.now();
+        localStorage.setItem('wishlist_updated', JSON.stringify({ product_id: product.id, ts: now, in_wishlist: newState }));
+        window.dispatchEvent(new CustomEvent('wishlist_updated', { detail: { product_id: product.id, ts: now, in_wishlist: newState } }));
+      } catch (err) {
+        // ignore storage errors
+      }
+    } catch (err) {
+      triggerToast("Failed to update wishlist");
+    } finally {
+      setLoadingWishlist(false);
     }
   };
 
@@ -432,6 +543,18 @@ export default function ProductDetail() {
               </div>
               <button onClick={handleAddToCart} className={`flex-1 font-black text-xl rounded-2xl transition-all active:scale-95 flex items-center justify-center gap-3 py-5 shadow-2xl ${isLiquorMode ? 'bg-purple-600 text-white shadow-purple-900/40 hover:bg-purple-500' : 'bg-blue-600 text-white shadow-blue-100 hover:bg-black'}`}>
                 <ShoppingBag size={24} /> ADD TO CART
+              </button>
+            </div>
+
+            {/* Secondary wishlist CTA - below add-to-cart for clarity */}
+            <div className="mt-4">
+              <button
+                onClick={(e) => toggleWishlist(e)}
+                disabled={loadingWishlist}
+                className={`w-full py-3 rounded-xl font-black text-sm flex items-center justify-center gap-3 transition-colors ${isInWishlist ? (isLiquorMode ? 'bg-purple-700 text-white' : 'bg-red-50 text-red-600') : (isLiquorMode ? 'bg-gray-800 text-gray-300' : 'bg-gray-100 text-gray-700 hover:bg-gray-200')}`}
+              >
+                <Heart size={18} className={`${isInWishlist ? 'fill-current' : ''}`} />
+                {isInWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
               </button>
             </div>
           </div>

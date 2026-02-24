@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ShoppingCart, Zap, Search, LogOut, Wine, UserCircle, X, LayoutDashboard, Settings, ChevronDown } from 'lucide-react';
+import { ShoppingCart, Zap, Search, LogOut, Wine, UserCircle, X, LayoutDashboard, Settings, ChevronDown, Heart } from 'lucide-react';
 import { useCartStore } from '../store/useCartStore';
 import { useAuthStore } from '../store/useAuthStore';
 
@@ -88,7 +88,7 @@ export default function Navbar() {
         isLiquorMode ? 'bg-black text-white' : 'bg-white'
       }`}>
 
-        <nav className={`backdrop-blur-md py-4 px-6 md:px-10 flex justify-between items-center border-b transition-colors duration-500 ${
+        <nav className={`backdrop-blur-md py-3 sm:py-4 px-4 sm:px-6 md:px-10 flex justify-between items-center border-b transition-colors duration-500 ${
           isLiquorMode ? 'bg-black/90 border-purple-900/50' : 'bg-white/90 border-gray-100'
         }`}>
 
@@ -138,18 +138,19 @@ export default function Navbar() {
           </div>
 
           {/* ACTIONS */}
-          <div className="flex items-center gap-2 md:gap-4">
+          <div className="flex items-center gap-1 sm:gap-2 md:gap-4">
             <button
-              className={`md:hidden p-2 rounded-full transition-all ${isLiquorMode ? 'hover:bg-purple-900/30 text-purple-400' : 'hover:bg-gray-100 text-gray-700'}`}
+              className={`md:hidden p-2.5 sm:p-3 rounded-lg transition-all ${isLiquorMode ? 'hover:bg-purple-900/30 text-purple-400' : 'hover:bg-gray-100 text-gray-700'}`}
               onClick={() => setMobileSearchOpen(prev => !prev)}
+              title="Search"
             >
-              {mobileSearchOpen ? <X size={22} /> : <Search size={22} />}
+              {mobileSearchOpen ? <X size={20} /> : <Search size={20} />}
             </button>
 
-            <Link to="/cart" className={`relative p-2.5 rounded-xl transition-all group ${
+            <Link to="/cart" className={`relative p-2.5 sm:p-3 rounded-lg transition-all group ${
               isLiquorMode ? 'hover:bg-purple-900/30 bg-gray-900' : 'hover:bg-blue-50 bg-gray-50 text-gray-700'
-            }`}>
-              <ShoppingCart size={22} className={`transition-colors ${
+            }`} title="Shopping cart">
+              <ShoppingCart size={20} className={`transition-colors ${
                 isLiquorMode ? 'text-purple-400 group-hover:text-purple-200' : 'group-hover:text-blue-600'
               }`} />
               {cartCount > 0 && (
@@ -160,6 +161,16 @@ export default function Navbar() {
                 </span>
               )}
             </Link>
+
+            {token && (
+              <Link to="/wishlist" className={`p-2.5 sm:p-3 rounded-lg transition-all group ${
+                isLiquorMode ? 'hover:bg-purple-900/30 bg-gray-900' : 'hover:bg-blue-50 bg-gray-50 text-gray-700'
+              }`} title="Wishlist">
+                <Heart size={20} className={`transition-colors ${
+                  isLiquorMode ? 'text-purple-400 group-hover:text-purple-200' : 'text-gray-700 group-hover:text-red-600'
+                }`} />
+              </Link>
+            )}
 
             {token ? (
               <div className="relative group">
@@ -240,12 +251,12 @@ export default function Navbar() {
         {/* CATEGORY BAR - Hidden when searchQuery has text */}
         {!shouldHideCategories && (
           <div className={`transition-all duration-500 border-b overflow-x-auto no-scrollbar ${isLiquorMode ? 'bg-black border-purple-900/30' : 'bg-white border-gray-100'}`}>
-            <div className="max-w-7xl mx-auto px-6 md:px-10 flex gap-8 py-3">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10 flex gap-4 sm:gap-8 py-3">
               {categories.map((cat) => (
                 <button
                   key={cat}
                   onClick={() => handleCategoryClick(cat)}
-                  className={`text-[10px] font-black uppercase tracking-[0.2em] whitespace-nowrap transition-all pb-1 border-b-2 ${
+                  className={`text-[9px] sm:text-[10px] font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] whitespace-nowrap transition-all pb-1 border-b-2 ${
                     selectedCategory === cat
                       ? (isLiquorMode ? "text-purple-400 border-purple-400" : "text-blue-600 border-blue-600")
                       : (isLiquorMode ? "text-gray-600 border-transparent hover:text-purple-300" : "text-gray-400 border-transparent hover:text-gray-900")

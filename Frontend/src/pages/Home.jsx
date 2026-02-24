@@ -326,7 +326,7 @@ export default function Home() {
           )}
 
           {filteredProducts.length > 0 ? (
-            <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 transition-opacity duration-300 ${isUpdating ? 'opacity-30 pointer-events-none' : 'opacity-100'}`}>
+            <div className={`grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 transition-opacity duration-300 ${isUpdating ? 'opacity-30 pointer-events-none' : 'opacity-100'}`}>
               {filteredProducts.map(p => (
                 <ProductCard key={p.id} product={p} />
               ))}

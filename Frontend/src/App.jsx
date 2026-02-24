@@ -12,8 +12,8 @@ import Profile from './pages/Profile';
 import Toast from './components/Toast';
 import AdminDashboard from './pages/AdminDashboard';
 import About from './pages/About';
-// NEW: Import the ContactUs page
-import ContactUs from './pages/Contactus'; 
+import ContactUs from './pages/Contactus';
+import Wishlist from './pages/Wishlist';
 import { useAuthStore } from './store/useAuthStore';
 import { useCartStore } from './store/useCartStore';
 
@@ -74,6 +74,7 @@ function App() {
               element={token ? <Checkout /> : <Navigate to="/login" replace />} 
             />
             <Route path="/profile" element={token ? <Profile /> : <Navigate to="/login" replace />} />
+            <Route path="/wishlist" element={token ? <Wishlist /> : <Navigate to="/login" replace />} />
 
             <Route path="/admin-dashboard" element={token ? <AdminDashboard /> : <Navigate to="/login" replace />} />
 

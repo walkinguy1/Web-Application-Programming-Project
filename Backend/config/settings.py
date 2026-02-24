@@ -97,6 +97,7 @@ INSTALLED_APPS = [
     'products',
     'payments',
     'ratings',
+    'wishlist',
     'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt',
