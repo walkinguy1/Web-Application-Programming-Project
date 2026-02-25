@@ -10,6 +10,8 @@ export const useAuthStore = create((set) => ({
   // LOGIN
   login: async (username, password) => {
     try {
+      console.log('Attempting login with username:', username);
+      
       // ── Step 1: Snapshot the guest cart BEFORE login ──
       const guestItems = loadGuestCart().map(item => ({
         product_id: item.product_id,
@@ -17,13 +19,17 @@ export const useAuthStore = create((set) => ({
       }));
 
       // ── Step 2: Authenticate ──
+      console.log('Sending login request to:', `${backendURL}/api/auth/login/`);
       const res = await axios.post(`${backendURL}/api/auth/login/`, { username, password });
+      console.log('Login response received:', res.data);
+      
       const { access } = res.data;
       const userData = { username, is_staff: res.data.is_staff || false };
 
       localStorage.setItem('token', access);
       localStorage.setItem('user', JSON.stringify(userData));
       set({ token: access, user: userData });
+      console.log('Token and user stored. Token:', access.substring(0, 20) + '...');
 
       // ── Step 3: Merge guest cart into the user's server cart ──
       if (guestItems.length > 0) {
@@ -40,12 +46,16 @@ export const useAuthStore = create((set) => ({
         }
       }
 
+      console.log('Login successful, returning success: true');
       return { success: true };
     } catch (err) {
-      console.error("Login Error:", err.response?.data);
+      console.error("Login Error:", err);
+      console.error("Error response:", err.response?.data);
+      const message = err.response?.data?.detail || "Invalid username or password";
+      console.log('Returning error:', message);
       return {
         success: false,
-        message: err.response?.data?.detail || "Invalid username or password",
+        message: message,
       };
     }
   },

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Heart, ShoppingCart, Trash2 } from 'lucide-react';
 import backendURL from '../config';
 
@@ -8,6 +8,7 @@ export default function Wishlist() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const token = localStorage.getItem('token');
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchWishlist();
@@ -56,24 +57,38 @@ export default function Wishlist() {
 
   const addToCart = async (product) => {
     try {
-      const response = await fetch(`${backendURL}/api/cart/`, {
+      console.log('Adding to cart:', { product_id: product.id, quantity: 1 });
+      console.log('Using token:', token ? token.substring(0, 20) + '...' : 'NO TOKEN');
+      console.log('Endpoint:', `${backendURL}/api/cart/add/`);
+      
+      const response = await fetch(`${backendURL}/api/cart/add/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({
-          product: product.id,
+          product_id: product.id,
           quantity: 1,
         }),
       });
 
+      console.log('Response status:', response.status);
+      console.log('Response ok:', response.ok);
+      
+      const responseData = await response.json();
+      console.log('Response data:', responseData);
+
       if (response.ok) {
-        alert('Added to cart!');
         removeFromWishlist(product.id);
+        // Navigate to cart page
+        navigate('/cart');
+      } else {
+        alert('Error: ' + (responseData.error || responseData.message || 'Failed to add to cart'));
       }
     } catch (error) {
-      console.error('Error adding to cart:', error);
+      console.error('Fetch error:', error);
+      alert('Error: ' + error.message);
     }
   };
 
