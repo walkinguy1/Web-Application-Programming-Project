@@ -140,14 +140,14 @@ export default function Profile() {
               isLiquorMode ? 'bg-purple-600/20 group-hover:bg-purple-500/30' : 'bg-blue-600/20 group-hover:bg-blue-500/30'
             }`} />
             
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 relative z-10">
-              <div className="flex items-center gap-8">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-8 relative z-10">
+              <div className="flex items-center gap-3 sm:gap-8">
                 {/* Avatar */}
                 <div className="relative group">
                   <div className={`w-24 h-24 rounded-[2rem] flex items-center justify-center shadow-2xl rotate-3 group-hover:rotate-0 transition-all duration-500 border border-white/20 bg-gradient-to-br ${
                     isLiquorMode ? 'from-purple-900 via-zinc-900 to-black' : 'from-blue-600 via-indigo-700 to-purple-800'
                   }`}>
-                    <span className={`text-4xl font-black italic ${isLiquorMode ? 'text-purple-400' : 'text-white'}`}>
+                    <span className={`text-2xl sm:text-4xl font-black italic ${isLiquorMode ? 'text-purple-400' : 'text-white'}`}>
                       {profile?.username?.[0] || 'U'}
                     </span>
                   </div>
@@ -157,7 +157,7 @@ export default function Profile() {
                 </div>
 
                 <div>
-                  <h1 className="text-4xl font-black tracking-tighter">
+                  <h1 className="text-2xl sm:text-4xl font-black tracking-tighter">
                     {profile?.first_name ? `${profile.first_name} ${profile.last_name}` : profile?.username}
                   </h1>
                   <div className="flex items-center gap-3 mt-1">
@@ -176,7 +176,7 @@ export default function Profile() {
               {!editing ? (
                 <button
                   onClick={() => setEditing(true)}
-                  className={`flex items-center gap-2 px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-[0.15em] transition-all shadow-xl active:scale-95 shrink-0 ${
+                  className={`flex items-center gap-2 px-4 sm:px-8 py-3 sm:py-4 rounded-2xl font-black text-xs uppercase tracking-[0.15em] transition-all shadow-xl active:scale-95 shrink-0 ${
                     isLiquorMode ? 'bg-purple-600 text-white hover:bg-purple-500' : 'bg-white text-black hover:bg-blue-600 hover:text-white'
                   }`}
                 >
@@ -185,7 +185,7 @@ export default function Profile() {
               ) : (
                 <button
                   onClick={() => setEditing(false)}
-                  className="flex items-center gap-2 px-8 py-4 rounded-2xl bg-slate-800 text-rose-400 font-black text-xs uppercase tracking-[0.15em] hover:bg-rose-500/10 transition-all shrink-0 border border-rose-500/20"
+                  className="flex items-center gap-2 px-4 sm:px-8 py-3 sm:py-4 rounded-2xl bg-slate-800 text-rose-400 font-black text-xs uppercase tracking-[0.15em] hover:bg-rose-500/10 transition-all shrink-0 border border-rose-500/20"
                 >
                   <X size={16} /> Cancel
                 </button>
@@ -326,7 +326,7 @@ export default function Profile() {
                     </div>
                     <div className="flex items-baseline gap-2">
                       <span className="text-[10px] font-black text-slate-500 uppercase">Total</span>
-                      <span className="text-4xl font-black text-white tracking-tighter leading-none">
+                      <span className="text-2xl sm:text-4xl font-black text-white tracking-tighter leading-none">
                         <span className={`text-xl mr-1 ${isLiquorMode ? 'text-purple-500' : 'text-blue-500'}`}>$</span>
                         {payment.total_amount.toFixed(2)}
                       </span>

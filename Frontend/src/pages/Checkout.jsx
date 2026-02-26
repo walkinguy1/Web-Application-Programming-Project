@@ -100,7 +100,7 @@ export default function Checkout() {
           
           <div className="text-center">
             <p className="text-gray-400 font-bold uppercase tracking-widest text-[10px] mb-1">Total Amount</p>
-            <h2 className="text-5xl font-black text-gray-900 tracking-tighter">
+            <h2 className="text-3xl sm:text-5xl font-black text-gray-900 tracking-tighter">
               ${totalAmount.toFixed(2)}
             </h2>
           </div>

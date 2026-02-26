@@ -203,7 +203,7 @@ export default function Home() {
           {isLiquorMode && (
             <div className="absolute top-0 right-0 w-96 h-96 bg-purple-600/20 blur-[120px] rounded-full -mr-20 -mt-20"></div>
           )}
-          <div className="max-w-7xl mx-auto px-6 py-20 md:py-32 relative z-10">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-20 md:py-32 relative z-10">
             <div className="max-w-3xl">
               <span className={`text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-widest mb-6 inline-block transition-colors ${isLiquorMode ? 'bg-purple-600 text-white shadow-lg shadow-purple-500/20' : 'bg-yellow-400 text-blue-900'}`}>
                 {isLiquorMode ? "Premium Spirits Collection" : "Free Shipping on All Orders"}
@@ -232,7 +232,7 @@ export default function Home() {
       )}
 
       {/* PRODUCTS SECTION */}
-      <section id="products-section" className="max-w-7xl mx-auto px-6 py-12">
+      <section id="products-section" className="max-w-7xl mx-auto px-3 sm:px-6 py-8 sm:py-12">
         {/* TOOLBAR */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div className="flex items-center gap-4">
@@ -326,7 +326,7 @@ export default function Home() {
           )}
 
           {filteredProducts.length > 0 ? (
-            <div className={`grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 transition-opacity duration-300 ${isUpdating ? 'opacity-30 pointer-events-none' : 'opacity-100'}`}>
+            <div className={`grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4 lg:gap-6 transition-opacity duration-300 ${isUpdating ? 'opacity-30 pointer-events-none' : 'opacity-100'}`}>
               {filteredProducts.map(p => (
                 <ProductCard key={p.id} product={p} />
               ))}

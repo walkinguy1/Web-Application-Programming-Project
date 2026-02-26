@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { Link } from 'react-router-dom';
 import { Star, Heart } from 'lucide-react';
 import { useState, useEffect } from 'react';
@@ -112,12 +113,12 @@ export default function ProductCard({ product }) {
       <button
         onClick={toggleWishlist}
         disabled={loading}
-        className="absolute top-3 right-3 z-20 p-2.5 rounded-full bg-white shadow-lg transition-all duration-200 cursor-pointer hover:scale-110 active:scale-95"
+        className="absolute top-2 right-2 z-20 p-1.5 sm:p-2.5 rounded-full bg-white shadow-lg transition-all duration-200 cursor-pointer hover:scale-110 active:scale-95"
         type="button"
         aria-label="Add to wishlist"
       >
         <Heart
-          size={22}
+          size={16}
           className={`transition-all duration-300 ${
             isInWishlist 
               ? 'text-red-500 fill-red-500' 
@@ -151,14 +152,14 @@ export default function ProductCard({ product }) {
           </div>
 
           {/* Product Info */}
-          <div className="flex-grow flex flex-col p-4 sm:p-3">
+          <div className="flex-grow flex flex-col p-3 sm:p-4">
             {/* Category Badge */}
             <span className="text-xs font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full w-fit mb-2">
               {product.category}
             </span>
 
             {/* Product Title */}
-            <h3 className="font-bold text-gray-900 line-clamp-2 mb-2 text-sm group-hover:text-blue-600 transition-colors leading-tight">
+            <h3 className="font-bold text-gray-900 line-clamp-2 mb-1.5 text-sm group-hover:text-blue-600 transition-colors leading-tight">
               {product.title}
             </h3>
 
@@ -166,7 +167,7 @@ export default function ProductCard({ product }) {
 
             {/* Price - Prominent Display */}
             <div className="flex items-baseline gap-2 mt-auto">
-              <span className="text-2xl font-black text-gray-900">
+              <span className="text-lg sm:text-2xl font-black text-gray-900">
                 ${parseFloat(product.price).toFixed(2)}
               </span>
               <span className="text-xs text-gray-500 font-semibold">
@@ -175,10 +176,7 @@ export default function ProductCard({ product }) {
             </div>
           </div>
 
-          {/* Quick View Button (Mobile) */}
-          <div className="px-4 py-3 border-t border-gray-100 sm:hidden bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold text-center rounded-b-2xl">
-            View Details
-          </div>
+
         </div>
       </Link>
     </div>
