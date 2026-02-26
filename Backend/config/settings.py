@@ -61,8 +61,11 @@ STORAGES = {
 }
 
 # ── Session cookie ────────────────────────────────────────────────────────────
-SESSION_COOKIE_SAMESITE = 'None'
+# On production (HTTPS), SESSION_COOKIE_SECURE=True is set via env var.
+# SameSite=None is only applied in production to allow cross-origin cookies.
+# Locally we use Lax so Django admin session cookies work over HTTP.
 SESSION_COOKIE_SECURE = config('SESSION_COOKIE_SECURE', default=False, cast=bool)
+SESSION_COOKIE_SAMESITE = 'None' if SESSION_COOKIE_SECURE else 'Lax'
 
 # ── REST Framework ────────────────────────────────────────────────────────────
 REST_FRAMEWORK = {

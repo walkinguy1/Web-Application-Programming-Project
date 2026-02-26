@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Heart, ShoppingCart, Trash2 } from 'lucide-react';
 import backendURL from '../config';
+import { useCartStore } from '../store/useCartStore';
 
 export default function Wishlist() {
   const [wishlistItems, setWishlistItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const token = localStorage.getItem('token');
-  const navigate = useNavigate();
+  const { updateCount, triggerToast } = useCartStore();
 
   useEffect(() => {
     fetchWishlist();
@@ -48,7 +49,7 @@ export default function Wishlist() {
       });
 
       if (response.ok) {
-        setWishlistItems(wishlistItems.filter(item => item.id !== productId));
+        setWishlistItems(prev => prev.filter(item => item.id !== productId));
       }
     } catch (error) {
       console.error('Error removing from wishlist:', error);
@@ -57,10 +58,6 @@ export default function Wishlist() {
 
   const addToCart = async (product) => {
     try {
-      console.log('Adding to cart:', { product_id: product.id, quantity: 1 });
-      console.log('Using token:', token ? token.substring(0, 20) + '...' : 'NO TOKEN');
-      console.log('Endpoint:', `${backendURL}/api/cart/add/`);
-      
       const response = await fetch(`${backendURL}/api/cart/add/`, {
         method: 'POST',
         headers: {
@@ -73,22 +70,23 @@ export default function Wishlist() {
         }),
       });
 
-      console.log('Response status:', response.status);
-      console.log('Response ok:', response.ok);
-      
       const responseData = await response.json();
-      console.log('Response data:', responseData);
 
       if (response.ok) {
-        removeFromWishlist(product.id);
-        // Navigate to cart page
-        navigate('/cart');
+        // Update cart count in navbar
+        if (responseData.cart_count !== undefined) {
+          updateCount(responseData.cart_count);
+        }
+        // Remove from wishlist silently (no navigation)
+        await removeFromWishlist(product.id);
+        // Show toast confirmation
+        triggerToast(`${product.title} added to cart!`);
       } else {
-        alert('Error: ' + (responseData.error || responseData.message || 'Failed to add to cart'));
+        triggerToast('Failed to add to cart. Please try again.');
       }
     } catch (error) {
       console.error('Fetch error:', error);
-      alert('Error: ' + error.message);
+      triggerToast('Error adding to cart.');
     }
   };
 

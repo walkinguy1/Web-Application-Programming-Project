@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { create } from 'zustand';
 import axios from 'axios';
 import { loadGuestCart, clearGuestCart } from './useCartStore';
